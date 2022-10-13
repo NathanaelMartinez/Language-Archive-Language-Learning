@@ -1,4 +1,4 @@
-# CS467-Language-Learning-App-Capstone
+# CS467 Capstone Project: Language Learning App
 ## Running the Application
 To run the application, complete the following steps:
 1. Download the file titled "cs467_language_learning_app"
