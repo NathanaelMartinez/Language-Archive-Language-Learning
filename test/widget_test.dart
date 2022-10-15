@@ -26,6 +26,5 @@ void main() {
 
     // Verify that there is a sign up button.
     expect(find.text('Sign Up'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
   });
 }
