@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'create_account_screen.dart';
+import 'selection_screen.dart';
 
 class HomeLoginScreen extends StatefulWidget {
   const HomeLoginScreen({super.key, required this.title});
@@ -57,7 +58,7 @@ class _HomeLoginScreenState extends State<HomeLoginScreen> {
             child: TextField(
                 decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                labelText: 'Username',
+                labelText: 'Email',
                 hintText: 'Please enter your email address'
               ),
             ),
@@ -79,12 +80,16 @@ class _HomeLoginScreenState extends State<HomeLoginScreen> {
               foregroundColor: Colors.white,
               backgroundColor: Colors.black
             ),
-            // TODO: Create Selection Screen
-            onPressed: () { }, 
+            // TODO: Will need to update for Auth0 login
+            onPressed: () { 
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: ((context) => SelectionScreen())), 
+              );
+            }, 
             child: const Text('Login')
           ),
           TextButton(
-            // TODO: Create Registration Screen
             onPressed: () { 
               Navigator.push(
                 context,
@@ -139,7 +144,7 @@ class _HomeLoginScreenState extends State<HomeLoginScreen> {
                   child: TextField(
                       decoration: InputDecoration(
                       border: OutlineInputBorder(),
-                      labelText: 'Username',
+                      labelText: 'Email',
                       hintText: 'Please enter your email address'
                     ),
                   ),
@@ -158,24 +163,28 @@ class _HomeLoginScreenState extends State<HomeLoginScreen> {
                 const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [                
+                  children: [ 
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,
                         backgroundColor: Colors.black
                       ),
-                      // TODO: Create Selection Screen
-                      onPressed: () { }, 
+                      // TODO: Will need to update for Auth0 login
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: ((context) => SelectionScreen())), 
+                        );
+                      }, 
                       child: const Text('Login')
                     ),
                     TextButton(
-                      // TODO: Create Registration Screen
                       onPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: ((context) => CreateAccountScreen())), 
-                          );
-                        }, 
+                        );
+                      }, 
                       child: const Text('Sign Up')
                     )
                   ]

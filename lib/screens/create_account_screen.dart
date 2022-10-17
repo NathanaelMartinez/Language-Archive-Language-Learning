@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'selection_screen.dart';
 
 class CreateAccountScreen extends StatefulWidget  {
   @override
@@ -9,14 +10,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen>  {
   @override
   Widget build(BuildContext context)  {
     return Scaffold(
-      /*
-      appBar: AppBar(
-        centerTitle: false,
-        backgroundColor: Colors.white10,
-        iconTheme: IconThemeData(color: Colors.black),
-        elevation: 0
-      ),
-      */
       body: OrientationBuilder(
         builder: (context, orientation) {
           if (orientation == Orientation.portrait)  {
@@ -42,7 +35,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen>  {
             ),
           ),
           Container(
-            margin: const EdgeInsets.only(left: 30, right: 30, bottom: 10, top: 20),
+            margin: const EdgeInsets.only(left: 30, right: 30, bottom: 10, top: 30),
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               border: Border.all(
@@ -53,86 +46,60 @@ class _CreateAccountScreenState extends State<CreateAccountScreen>  {
             ),
             child: Column(
               children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Container(
-                    child: Text(
-                      'Email',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700 
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 5),
                 TextField(
                     decoration: InputDecoration(
                     border: OutlineInputBorder(),
+                    labelText: 'Email',
                     hintText: 'Please enter your email address'
                   ),
                 ),
                 const SizedBox(height: 10),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Container(
-                    child: Text(
-                      'Password',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700 
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 5),
                 TextField(
                     decoration: InputDecoration(
                     border: OutlineInputBorder(),
+                    labelText: 'Password',
                     hintText: 'Please enter your password'
                   ),
                 ),
                 const SizedBox(height: 10),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Container(
-                    child: Text(
-                      'Confirm Password',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700 
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 5),
                 TextField(
                     decoration: InputDecoration(
                     border: OutlineInputBorder(),
+                    labelText: 'Confirm Password',
                     hintText: 'Please re-enter your password'
                   ),
                 ),
                 const SizedBox(height: 20),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: Colors.black
-                  ),
-                  // TODO: Create Selection Screen
-                  onPressed: () { }, 
-                  child: const Text('Create your account')
-                ),
-                TextButton(
-                  onPressed: () { 
-                    Navigator.pop(context);
-                  }, 
-                  child: const Text(
-                    'Cancel',
-                    style: TextStyle(
-                      color: Colors.red
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.black
+                      ),
+                      // TODO: Will need to update for Auth0 login
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: ((context) => SelectionScreen())), 
+                        );
+                      }, 
+                      child: const Text('Create your account')
+                    ),
+                    TextButton(
+                      onPressed: () { 
+                        Navigator.pop(context);
+                      }, 
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(
+                          color: Colors.red
+                        )
+                      )
                     )
-                  )
-                )
+                  ],
+                ),
               ]
             )
           ),
@@ -143,7 +110,123 @@ class _CreateAccountScreenState extends State<CreateAccountScreen>  {
 
   Widget _landscapeModeCreateAccount()  {
     return Center(
-      child: Text('In Development...')
+      child: ListView(
+        children: [
+          SizedBox(height: 20),
+          // Title
+          ListTile(
+            title: Center( 
+              child: const Text(
+                'Create Account',
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.w700 
+                ),
+              ),
+            )
+          ),
+          // Entry Container
+          // TODO: Implement form later on
+          ListTile(
+            title: Container(
+              margin: const EdgeInsets.only(left: 30, right: 30, bottom: 10, top: 20),
+              padding: const EdgeInsets.all(30),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.black,
+                  width: 3
+                ),
+                borderRadius: BorderRadius.all(Radius.circular(5))
+              ),
+              child: Column(
+                children: [
+                  // Email entry box
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Email',
+                            hintText: 'Please enter your email address'
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  // Password entry box
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Password',
+                            hintText: 'Please enter your password'
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  // Confirm password confirmation box
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Confirm Password',
+                            hintText: 'Please re-enter your password'
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  // Buttons
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor: Colors.black
+                          ),
+                          // TODO: Will need to update for Auth0 sign in
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: ((context) => SelectionScreen())), 
+                            );
+                          }, 
+                          child: const Text('Create your account')
+                        ),
+                      ),
+                      Expanded(
+                        child: TextButton(
+                          onPressed: () { 
+                            Navigator.pop(context);
+                          }, 
+                          child: const Text(
+                            'Cancel',
+                            style: TextStyle(
+                              color: Colors.red
+                            )
+                          )
+                        )
+                      )
+                    ],
+                  )
+                ]
+              ),
+            )
+          ),
+          SizedBox(height: 10)
+        ],
+      ),
     );
   }
 }
