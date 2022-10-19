@@ -23,11 +23,10 @@ void main() {
 
   Widget createHomeWidgetUnderTest() {
     return MaterialApp(
-      title: 'Flutter Demo',
       theme: ThemeData(
         fontFamily: 'Lato',
       ),
-      home: const HomeLoginScreen(title: 'Learning App Login'),
+      home: const HomeLoginScreen(),
     );
   }
 
