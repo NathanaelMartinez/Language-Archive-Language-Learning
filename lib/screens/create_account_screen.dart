@@ -40,33 +40,60 @@ class _CreateAccountScreenState extends State<CreateAccountScreen>  {
             decoration: BoxDecoration(
               border: Border.all(
                 color: Colors.black,
-                width: 3
+                width: 2
               ),
-              borderRadius: BorderRadius.all(Radius.circular(5))
+              borderRadius: BorderRadius.all(Radius.circular(5)),
+              color: Colors.black
             ),
             child: Column(
               children: [
                 TextField(
-                    decoration: InputDecoration(
-                    border: OutlineInputBorder(),
+                  style: TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white)
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white)
+                    ),
+                    labelStyle: TextStyle(color: Colors.white),
+                    hintStyle: TextStyle(color: Colors.white),
                     labelText: 'Email',
                     hintText: 'Please enter your email address'
                   ),
                 ),
                 const SizedBox(height: 10),
                 TextField(
-                    decoration: InputDecoration(
-                    border: OutlineInputBorder(),
+                  obscureText: true,
+                  style: TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white)
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white)
+                    ),
+                    labelStyle: TextStyle(color: Colors.white),
+                    hintStyle: TextStyle(color: Colors.white),
                     labelText: 'Password',
                     hintText: 'Please enter your password'
                   ),
                 ),
                 const SizedBox(height: 10),
                 TextField(
-                    decoration: InputDecoration(
-                    border: OutlineInputBorder(),
+                  obscureText: true,
+                  style: TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white)
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white)
+                    ),
+                    labelStyle: TextStyle(color: Colors.white),
+                    hintStyle: TextStyle(color: Colors.white),
                     labelText: 'Confirm Password',
-                    hintText: 'Please re-enter your password'
+                    hintText: 'Please re-enter your password',
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -76,7 +103,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen>  {
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,
-                        backgroundColor: Colors.black
+                        backgroundColor: Colors.green
                       ),
                       // TODO: Will need to update for Auth0 login
                       onPressed: () {
@@ -87,16 +114,15 @@ class _CreateAccountScreenState extends State<CreateAccountScreen>  {
                       }, 
                       child: const Text('Create your account')
                     ),
-                    TextButton(
-                      onPressed: () { 
-                        Navigator.pop(context);
-                      }, 
-                      child: const Text(
-                        'Cancel',
-                        style: TextStyle(
-                          color: Colors.red
-                        )
-                      )
+                    SizedBox(width: 10),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        side: BorderSide(color: Colors.red),
+                        foregroundColor: Colors.red,
+                        backgroundColor: Colors.black,
+                      ),                      
+                      onPressed: () {Navigator.pop(context);}, 
+                      child: const Text('Cancel')
                     )
                   ],
                 ),
@@ -134,9 +160,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen>  {
               decoration: BoxDecoration(
                 border: Border.all(
                   color: Colors.black,
-                  width: 3
+                  width: 2
                 ),
-                borderRadius: BorderRadius.all(Radius.circular(5))
+                borderRadius: BorderRadius.all(Radius.circular(5)),
+                color: Colors.black
               ),
               child: Column(
                 children: [
@@ -145,8 +172,16 @@ class _CreateAccountScreenState extends State<CreateAccountScreen>  {
                     children: [
                       Expanded(
                         child: TextField(
+                          style: TextStyle(color: Colors.white),
                           decoration: InputDecoration(
-                            border: OutlineInputBorder(),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white)
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white)
+                            ),
+                            labelStyle: TextStyle(color: Colors.white),
+                            hintStyle: TextStyle(color: Colors.white),
                             labelText: 'Email',
                             hintText: 'Please enter your email address'
                           ),
@@ -160,8 +195,17 @@ class _CreateAccountScreenState extends State<CreateAccountScreen>  {
                     children: [
                       Expanded(
                         child: TextField(
+                          obscureText: true,
+                          style: TextStyle(color: Colors.white),
                           decoration: InputDecoration(
-                            border: OutlineInputBorder(),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white)
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white)
+                            ),
+                            labelStyle: TextStyle(color: Colors.white),
+                            hintStyle: TextStyle(color: Colors.white),
                             labelText: 'Password',
                             hintText: 'Please enter your password'
                           ),
@@ -175,10 +219,19 @@ class _CreateAccountScreenState extends State<CreateAccountScreen>  {
                     children: [
                       Expanded(
                         child: TextField(
+                          obscureText: true,
+                          style: TextStyle(color: Colors.white),
                           decoration: InputDecoration(
-                            border: OutlineInputBorder(),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white)
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white)
+                            ),
+                            labelStyle: TextStyle(color: Colors.white),
+                            hintStyle: TextStyle(color: Colors.white),
                             labelText: 'Confirm Password',
-                            hintText: 'Please re-enter your password'
+                            hintText: 'Please re-enter your password',
                           ),
                         ),
                       )
@@ -193,7 +246,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen>  {
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.white,
-                            backgroundColor: Colors.black
+                            backgroundColor: Colors.green
                           ),
                           // TODO: Will need to update for Auth0 sign in
                           onPressed: () {
@@ -205,17 +258,16 @@ class _CreateAccountScreenState extends State<CreateAccountScreen>  {
                           child: const Text('Create your account')
                         ),
                       ),
+                      SizedBox(width: 20),
                       Expanded(
-                        child: TextButton(
-                          onPressed: () { 
-                            Navigator.pop(context);
-                          }, 
-                          child: const Text(
-                            'Cancel',
-                            style: TextStyle(
-                              color: Colors.red
-                            )
-                          )
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            side: BorderSide(color: Colors.red),
+                            foregroundColor: Colors.red,
+                            backgroundColor: Colors.black,
+                          ),                      
+                          onPressed: () {Navigator.pop(context);}, 
+                          child: const Text('Cancel')
                         )
                       )
                     ],
