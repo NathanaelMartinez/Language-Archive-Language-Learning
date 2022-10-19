@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "20048165457",
+    "project_id": "language-learning-app-ef75f",
+    "storage_bucket": "language-learning-app-ef75f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:20048165457:android:36cb653aa56d69adcfd670",
+        "android_client_info": {
+          "package_name": "com.example.cs467_language_learning_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "20048165457-p4eu38doe4jbl9q5iq393mbpg9u5gigs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCPWjjkTgH-uK_c0TO_EGrL6KEF4MDnsk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "20048165457-p4eu38doe4jbl9q5iq393mbpg9u5gigs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
