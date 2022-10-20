@@ -32,7 +32,8 @@ class _HomeLoginScreenState extends State<HomeLoginScreen> {
         children: <Widget>[
           const Icon(
             Icons.school,
-            size: 130.0
+            size: 130.0,
+            color: Colors.black,
           ),
           // Title pending...
           const Text(

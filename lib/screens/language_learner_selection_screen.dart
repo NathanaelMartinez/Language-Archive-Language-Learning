@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'home_login_screen.dart';
+import 'language_learner_scenario_screen.dart';
 
 class LanguageLearnerSelectionScreen extends StatefulWidget {
   @override
@@ -27,7 +27,7 @@ class _LanguageLearnerSelectionScreenState extends State<LanguageLearnerSelectio
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'Practice a language scenario',
+                'Practice a scenario',
                 style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.w500,
@@ -37,7 +37,6 @@ class _LanguageLearnerSelectionScreenState extends State<LanguageLearnerSelectio
             )
           ]
         ),
-        automaticallyImplyLeading: false,
         centerTitle: false,
         backgroundColor: Colors.white10,
         iconTheme: IconThemeData(color: Colors.black),
@@ -47,14 +46,10 @@ class _LanguageLearnerSelectionScreenState extends State<LanguageLearnerSelectio
         child: ListView(
           children: [
             // Logout button
-            // TODO: Need to update routing
             ListTile(
               title: TextButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: ((context) => HomeLoginScreen())), 
-                  );
+                  Navigator.of(context).popUntil((route) => route.isFirst);
                 }, 
                 child: const Text(
                   'Log Out',
@@ -80,7 +75,7 @@ class _LanguageLearnerSelectionScreenState extends State<LanguageLearnerSelectio
       child: ListView(
         children: [
           // Scenario Scroll:
-          // TODO: Will need to include curated scenarios
+          // TODO: Will need to include curated scenarios/implement database connection
           SizedBox(height: 20),
           ListTile(
             title: Container(
@@ -114,7 +109,12 @@ class _LanguageLearnerSelectionScreenState extends State<LanguageLearnerSelectio
                         foregroundColor: Colors.black,
                         backgroundColor: Colors.white
                       ),
-                      onPressed: () {}, 
+                      onPressed: () {
+                        Navigator.push(
+                          context, 
+                          MaterialPageRoute(builder: ((context) => LanguageLearnerScenarioScreen())),
+                        );
+                      }, 
                       child: const Text('View')
                     )
                   )
@@ -154,7 +154,12 @@ class _LanguageLearnerSelectionScreenState extends State<LanguageLearnerSelectio
                         foregroundColor: Colors.black,
                         backgroundColor: Colors.white
                       ),
-                      onPressed: () {}, 
+                      onPressed: () {
+                        Navigator.push(
+                          context, 
+                          MaterialPageRoute(builder: ((context) => LanguageLearnerScenarioScreen())),
+                        );
+                      }, 
                       child: const Text('View')
                     )
                   )
@@ -194,7 +199,12 @@ class _LanguageLearnerSelectionScreenState extends State<LanguageLearnerSelectio
                         foregroundColor: Colors.black,
                         backgroundColor: Colors.white
                       ),
-                      onPressed: () {}, 
+                      onPressed: () {
+                        Navigator.push(
+                          context, 
+                          MaterialPageRoute(builder: ((context) => LanguageLearnerScenarioScreen())),
+                        );
+                      }, 
                       child: const Text('View')
                     )
                   )
@@ -234,7 +244,12 @@ class _LanguageLearnerSelectionScreenState extends State<LanguageLearnerSelectio
                         foregroundColor: Colors.black,
                         backgroundColor: Colors.white
                       ),
-                      onPressed: () {}, 
+                      onPressed: () {
+                        Navigator.push(
+                          context, 
+                          MaterialPageRoute(builder: ((context) => LanguageLearnerScenarioScreen())),
+                        );
+                      }, 
                       child: const Text('View')
                     )
                   )
@@ -274,7 +289,12 @@ class _LanguageLearnerSelectionScreenState extends State<LanguageLearnerSelectio
                         foregroundColor: Colors.black,
                         backgroundColor: Colors.white
                       ),
-                      onPressed: () {}, 
+                      onPressed: () {
+                        Navigator.push(
+                          context, 
+                          MaterialPageRoute(builder: ((context) => LanguageLearnerScenarioScreen())),
+                        );
+                      }, 
                       child: const Text('View')
                     )
                   )
@@ -314,7 +334,12 @@ class _LanguageLearnerSelectionScreenState extends State<LanguageLearnerSelectio
                         foregroundColor: Colors.black,
                         backgroundColor: Colors.white
                       ),
-                      onPressed: () {}, 
+                      onPressed: () {
+                        Navigator.push(
+                          context, 
+                          MaterialPageRoute(builder: ((context) => LanguageLearnerScenarioScreen())),
+                        );
+                      }, 
                       child: const Text('View')
                     )
                   )

@@ -1,4 +1,3 @@
-import 'package:cs467_language_learning_app/screens/home_login_screen.dart';
 import 'package:cs467_language_learning_app/screens/language_learner_selection_screen.dart';
 import 'package:cs467_language_learning_app/screens/content_provider_selection_screen.dart';
 import 'package:flutter/material.dart';
@@ -34,14 +33,10 @@ class _SelectionScreenState extends State<SelectionScreen>  {
         child: ListView(
           children: [
             // Logout button
-            // TODO: Need to update routing
             ListTile(
               title: TextButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: ((context) => HomeLoginScreen())), 
-                  );
+                  Navigator.of(context).popUntil((route) => route.isFirst);
                 }, 
                 child: const Text(
                   'Log Out',
