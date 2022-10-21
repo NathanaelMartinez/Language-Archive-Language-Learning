@@ -1,48 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:cs467_language_learning_app/widgets/language_learning_app_scaffold.dart';
 
-class ContentProviderScenarioScreen extends StatefulWidget  {
+class ContentProviderScenarioScreen extends StatefulWidget {
   @override
-  State<ContentProviderScenarioScreen> createState() => _ContentProviderScenarioScreenState();
+  State<ContentProviderScenarioScreen> createState() =>
+      _ContentProviderScenarioScreenState();
 }
 
-class _ContentProviderScenarioScreenState extends State<ContentProviderScenarioScreen>  {
+class _ContentProviderScenarioScreenState
+    extends State<ContentProviderScenarioScreen> {
   @override
-  Widget build(BuildContext context)  {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Scenario',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.w700,
-            fontSize: 25
-          ),
-        ),
-        centerTitle: false,
-        backgroundColor: Colors.white10,
-        iconTheme: IconThemeData(color: Colors.black),
-        elevation: 0,
-      ),
-      endDrawer: Drawer(
-        child: ListView(
-          children: [
-            // Logout button
-            ListTile(
-              title: TextButton(
-                onPressed: () {
-                  Navigator.of(context).popUntil((route) => route.isFirst);
-                }, 
-                child: const Text(
-                  'Log Out',
-                  style: TextStyle(
-                    color: Colors.blue
-                  ),
-                )
-              ),
-            )
-          ],
-        )
-      ),
-    );
+  Widget build(BuildContext context) {
+    return LanguageLearningAppScaffold(
+        title: 'Scenario',
+        child: Center(child: Icon(Icons.school)),
+        subtitle: 'subtitle');
   }
 }
