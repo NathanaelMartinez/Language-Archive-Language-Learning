@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:cs467_language_learning_app/widgets/settings_drawer.dart';
 
 class LanguageLearningAppScaffold extends StatelessWidget {

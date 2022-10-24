@@ -12,17 +12,13 @@ class HomeLoginScreen extends StatefulWidget {
 class _HomeLoginScreenState extends State<HomeLoginScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: OrientationBuilder(
-        builder: (context, orientation) {
-          if (orientation == Orientation.portrait)  {
-            return _portraitModeLogin();
-          } else  {
-            return _landscapeModeLogin();
-          }
-        }
-      )
-    );
+    return Scaffold(body: OrientationBuilder(builder: (context, orientation) {
+      if (orientation == Orientation.portrait) {
+        return _portraitModeLogin();
+      } else {
+        return _landscapeModeLogin();
+      }
+    }));
   }
 
   Widget _portraitModeLogin() {
@@ -38,18 +34,12 @@ class _HomeLoginScreenState extends State<HomeLoginScreen> {
           // Title pending...
           const Text(
             'Language Learning App',
-            style: TextStyle(
-              fontSize: 25,
-              fontWeight: FontWeight.w700
-            ),
+            style: TextStyle(fontSize: 25, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 5),
           const Text(
             'a crowd-sourced language learning application',
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w300
-            ),
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300),
           ),
           const SizedBox(height: 30),
           // TODO: Will be updated to forms later on
@@ -57,10 +47,9 @@ class _HomeLoginScreenState extends State<HomeLoginScreen> {
             padding: EdgeInsets.symmetric(horizontal: 30),
             child: TextField(
               decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Email',
-                hintText: 'Please enter your email address'
-              ),
+                  border: OutlineInputBorder(),
+                  labelText: 'Email',
+                  hintText: 'Please enter your email address'),
             ),
           ),
           const SizedBox(height: 10),
@@ -69,133 +58,108 @@ class _HomeLoginScreenState extends State<HomeLoginScreen> {
             child: TextField(
               obscureText: true,
               decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Password',
-                hintText: 'Please enter your password'
-              ),
+                  border: OutlineInputBorder(),
+                  labelText: 'Password',
+                  hintText: 'Please enter your password'),
             ),
           ),
           const SizedBox(height: 30),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.white,
-              backgroundColor: Colors.black
-            ),
-            // TODO: Will need to update for Auth0 login
-            onPressed: () { 
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: ((context) => SelectionScreen())), 
-              );
-            }, 
-            child: const Text('Login')
-          ),
+              style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white, backgroundColor: Colors.black),
+              // TODO: Will need to update for Auth0 login
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: ((context) => SelectionScreen())),
+                );
+              },
+              child: const Text('Login')),
           TextButton(
-            onPressed: () { 
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: ((context) => CreateAccountScreen())), 
-              );
-            }, 
-            child: const Text('Sign Up')
-          )
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: ((context) => CreateAccountScreen())),
+                );
+              },
+              child: const Text('Sign Up'))
         ],
       ),
     );
   }
-  
-  Widget _landscapeModeLogin()  {
+
+  Widget _landscapeModeLogin() {
     return Center(
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(
-                  Icons.school,
-                  size: 100.0
-                ),
-                // Title pending...
-                const Text(
-                  'Language Learning App',
-                  style: TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.w700
-                  ),
-                ),
-                const SizedBox(height: 5),
-                const Text(
-                  'a crowd-sourced language learning application',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w300
-                  ),
-                ),
-              ]
-            )
+        child: Row(
+      children: [
+        Expanded(
+            child:
+                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          const Icon(Icons.school, size: 100.0),
+          // Title pending...
+          const Text(
+            'Language Learning App',
+            style: TextStyle(fontSize: 25, fontWeight: FontWeight.w700),
           ),
-          Expanded(
+          const SizedBox(height: 5),
+          const Text(
+            'a crowd-sourced language learning application',
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300),
+          ),
+        ])),
+        Expanded(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // TODO: Will be updated to forms later on
-                const Padding( 
-                  padding: EdgeInsets.symmetric(horizontal: 50),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Email',
-                      hintText: 'Please enter your email address'
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                const Padding( 
-                  padding: EdgeInsets.symmetric(horizontal: 50),
-                  child: TextField(
-                    obscureText: true,
-                    decoration: InputDecoration(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // TODO: Will be updated to forms later on
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 50),
+              child: TextField(
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Email',
+                    hintText: 'Please enter your email address'),
+              ),
+            ),
+            const SizedBox(height: 10),
+            const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 50),
+                child: TextField(
+                  obscureText: true,
+                  decoration: InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'Password',
-                      hintText: 'Please enter your password'
-                    ),
-                  )
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [ 
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: Colors.black
-                      ),
-                      // TODO: Will need to update for Auth0 login
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: ((context) => SelectionScreen())), 
-                        );
-                      }, 
-                      child: const Text('Login')
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: ((context) => CreateAccountScreen())), 
-                        );
-                      }, 
-                      child: const Text('Sign Up')
-                    )
-                  ]
-                ),
-              ],
-            )
-          )
-        ],
-      )
-    );
+                      hintText: 'Please enter your password'),
+                )),
+            const SizedBox(height: 20),
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.black),
+                  // TODO: Will need to update for Auth0 login
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: ((context) => SelectionScreen())),
+                    );
+                  },
+                  child: const Text('Login')),
+              TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: ((context) => CreateAccountScreen())),
+                    );
+                  },
+                  child: const Text('Sign Up'))
+            ]),
+          ],
+        ))
+      ],
+    ));
   }
 }

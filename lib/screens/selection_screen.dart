@@ -231,7 +231,6 @@ class _SelectionScreenState extends State<SelectionScreen> {
                     foregroundColor: Colors.white,
                     backgroundColor: Colors.green),
                 onPressed: () {
-                  // TODO: Create LL & CP Scenario Selection Screen
                   if (currSelection.validateSelection()) {
                     final correct = SnackBar(
                       content: Text(

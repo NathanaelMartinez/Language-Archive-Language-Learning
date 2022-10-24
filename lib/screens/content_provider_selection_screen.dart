@@ -27,12 +27,13 @@ class _ContentProviderSelectionScreenState
               itemBuilder: (context, index) {
                 var entry = snapshot.data!.docs[index];
                 Scenario scenario = Scenario(
-                  imageURL: entry['imageURL'],
-                  language: entry['language'],
-                  title: entry['title'],
-                  prompt: entry['prompt'],
-                  answer: entry['answer'],
-                );
+                    imageURL: entry['imageURL'],
+                    language: entry['language'],
+                    prompt: entry['prompt'],
+                    answer: entry['answer'],
+                    translatedAnswer: entry['translatedAnswer'],
+                    translatedPrompt: entry['translatedPrompt'],
+                    isComplete: entry['isComplete']);
                 return ListTile(
                   title: Container(
                     padding: const EdgeInsets.all(25),
@@ -43,7 +44,7 @@ class _ContentProviderSelectionScreenState
                     child: Column(children: [
                       Align(
                           alignment: Alignment.centerLeft,
-                          child: Text('${scenario.title}',
+                          child: Text('${scenario.prompt}',
                               style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w700,
@@ -59,8 +60,10 @@ class _ContentProviderSelectionScreenState
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
+                                      // TODO: Will need to update for future filtering
                                       builder: ((context) =>
-                                          ContentProviderScenarioScreen())),
+                                          ContentProviderScenarioScreen(
+                                              scenario: scenario))),
                                 );
                               },
                               child: const Text('View')))
