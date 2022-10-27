@@ -233,11 +233,21 @@ class _SelectionScreenState extends State<SelectionScreen> {
                     backgroundColor: Colors.green),
                 onPressed: () {
                   if (currSelection.validateSelection()) {
-                    final correct = SnackBar(
-                      content: Text(
-                          'You have selected: $currSelection.language & $currSelection.role'),
-                    );
-                    ScaffoldMessenger.of(context).showSnackBar(correct);
+                    if (currSelection.role == 'I want to learn') {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: ((context) =>
+                                LanguageLearnerSelectionScreen(userSelection: currSelection))),
+                      );
+                    } else {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: ((context) =>
+                                ContentProviderSelectionScreen(userSelection: currSelection))),
+                      );
+                    }
                   } else {
                     final incorrect = const SnackBar(
                       content: Text(
