@@ -64,6 +64,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                     onSelected: (value, index, isSelected) {
                       currSelection.language = value;
                     },
+                    // TODO: Might need to change format into dropdown menu
                     buttons: [
                       'Arabic',
                       'Chinese',
@@ -125,14 +126,14 @@ class _SelectionScreenState extends State<SelectionScreen> {
                             context,
                             MaterialPageRoute(
                                 builder: ((context) =>
-                                    LanguageLearnerSelectionScreen())),
+                                    LanguageLearnerSelectionScreen(userSelection: currSelection))),
                           );
                         } else {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: ((context) =>
-                                    ContentProviderSelectionScreen())),
+                                    ContentProviderSelectionScreen(userSelection: currSelection))),
                           );
                         }
                       } else {

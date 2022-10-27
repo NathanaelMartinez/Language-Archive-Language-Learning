@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import '../models/userSelection.dart';
 import 'content_provider_scenario_screen.dart';
 import 'package:cs467_language_learning_app/widgets/language_learning_app_scaffold.dart';
 import 'package:cs467_language_learning_app/models/scenario.dart';
 
 class ContentProviderSelectionScreen extends StatefulWidget {
+  ContentProviderSelectionScreen({super.key, required this.userSelection});
+  UserSelection userSelection;
+
   @override
   State<ContentProviderSelectionScreen> createState() =>
       _ContentProviderSelectionScreenState();
@@ -16,7 +19,7 @@ class _ContentProviderSelectionScreenState
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: FirebaseFirestore.instance.collection('scenarios').snapshots(),
+      stream: FirebaseFirestore.instance.collection('scenarios').where('isComplete', isEqualTo: false).where('language', isEqualTo: '${widget.userSelection.language}').snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
           return LanguageLearningAppScaffold(
@@ -60,7 +63,6 @@ class _ContentProviderSelectionScreenState
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      // TODO: Will need to update for future filtering
                                       builder: ((context) =>
                                           ContentProviderScenarioScreen(
                                               scenario: scenario))),
