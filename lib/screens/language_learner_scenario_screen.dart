@@ -35,11 +35,15 @@ class _LanguageLearnerScenarioScreenState
             // Image Group
             // TODO: Change to actual image
             SizedBox(height: 30),
-            const Icon(
-              Icons.image,
-              size: 130.0,
-              color: Colors.black,
+            Image.network(
+              widget.scenario.imageURL,
+              scale: 1.0,
             ),
+            // const Icon(
+            //   Icons.image,
+            //   size: 130.0,
+            //   color: Colors.black,
+            // ),
             // Prompt Group
             Column(
               children: [

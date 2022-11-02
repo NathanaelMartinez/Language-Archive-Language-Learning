@@ -36,12 +36,16 @@ class _ContentProviderScenarioScreenState
           child: Column(children: [
             // Image Group
             // TODO: Change to actual image
-            SizedBox(height: 25),
-            const Icon(
-              Icons.image,
-              size: 130.0,
-              color: Colors.black,
+            SizedBox(height: 30),
+            Image.network(
+              widget.scenario.imageURL,
+              scale: 1.0,
             ),
+            // const Icon(
+            //   Icons.image,
+            //   size: 130.0,
+            //   color: Colors.black,
+            // ),
             // Prompt Group
             Column(
               children: [
