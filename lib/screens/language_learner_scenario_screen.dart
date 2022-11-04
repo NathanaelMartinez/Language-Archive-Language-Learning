@@ -33,17 +33,20 @@ class _LanguageLearnerScenarioScreenState
           padding: const EdgeInsets.all(25),
           child: Column(children: [
             // Image Group
-            // TODO: Change to actual image
-            SizedBox(height: 30),
             Image.network(
               widget.scenario.imageURL,
               scale: 1.0,
+              loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress)  {
+                if (loadingProgress == null) return child;
+                return Center(
+                  child: CircularProgressIndicator(
+                    value: loadingProgress.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes! : null,
+                    color: Colors.black,
+                  ),
+                );
+              },
             ),
-            // const Icon(
-            //   Icons.image,
-            //   size: 130.0,
-            //   color: Colors.black,
-            // ),
+            SizedBox(height: 30),
             // Prompt Group
             Column(
               children: [
