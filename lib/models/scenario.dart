@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 class Scenario {
   String imageURL;
   String language;
