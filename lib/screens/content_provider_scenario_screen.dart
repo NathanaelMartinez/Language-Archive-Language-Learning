@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cs467_language_learning_app/models/scenarioDTO.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -29,13 +30,14 @@ class _ContentProviderScenarioScreenState
   var textAnswerController = TextControllerState();
   final formKey = GlobalKey<FormState>();
   final recorder = FlutterSoundRecorder();
-  // ScenarioDTO postDTO = ScenarioDTO();
+  ScenarioDTO scenarioDTO = ScenarioDTO();
   late bool _isUploading;
   late bool _isRecorded;
   late bool _isRecording;
 
-  late String _filePath;
-  late String? recordedUrl;
+  File? promptAudio;
+  File? answerAudio;
+  String? recordedUrl;
 
   Codec _codec = Codec.defaultCodec;
 
@@ -83,6 +85,11 @@ class _ContentProviderScenarioScreenState
         recordedUrl = value;
         debugPrint('path : -------- $recordedUrl');
         _isRecorded = true;
+        if (audioType == 'prompt') {
+          scenarioDTO.promptAudioUrl = recordedUrl;
+        } else {
+          scenarioDTO.answerAudioUrl = recordedUrl;
+        }
       });
     });
   }
@@ -233,7 +240,7 @@ class _ContentProviderScenarioScreenState
                       style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
                           backgroundColor: Colors.green),
-                      onPressed: () {
+                      onPressed: () async {
                         if (textAnswerController.formControler.text == '' ||
                             textPromptController.formControler.text == '') {
                           final incorrectInput = const SnackBar(
@@ -249,10 +256,11 @@ class _ContentProviderScenarioScreenState
                               .showSnackBar(incorrectInput);
                         } else {
                           // TODO: Add database input functionality
-                          textAnswerTranslation =
+                          scenarioDTO.translatedAnswer =
                               textAnswerController.formControler.text;
-                          textPromptTranslation =
+                          scenarioDTO.translatedPrompt =
                               textPromptController.formControler.text;
+                          _uploadAudioFiles();
                         }
                       },
                       child: Text('Submit')),
@@ -276,23 +284,36 @@ class _ContentProviderScenarioScreenState
     );
   }
 
-  Future<void> _onFileUploadButtonPressed() async {
-    FirebaseStorage firebaseStorage = FirebaseStorage.instance;
+  Future<void> _uploadAudioFiles() async {
     setState(() {
       _isUploading = true;
     });
     try {
-      await firebaseStorage
-          .ref('upload-voice-firebase')
-          .child(
-              _filePath.substring(_filePath.lastIndexOf('/'), _filePath.length))
-          .putFile(File(_filePath));
+      promptAudio = File(scenarioDTO.promptAudioUrl!);
+      var fileName = '${DateTime.now()}Prompt.aac';
+      Reference storageReference =
+          FirebaseStorage.instance.ref().child(fileName);
+      UploadTask uploadTask = storageReference.putFile(promptAudio!);
+      await uploadTask;
+      scenarioDTO.promptAudioUrl = await storageReference.getDownloadURL();
+      answerAudio = File(scenarioDTO.answerAudioUrl!);
+      fileName = '${DateTime.now()}Answer.aac';
+      storageReference = FirebaseStorage.instance.ref().child(fileName);
+      uploadTask = storageReference.putFile(answerAudio!);
+      await uploadTask;
+      scenarioDTO.answerAudioUrl = await storageReference.getDownloadURL();
       // widget.onUploadComplete();
     } catch (error) {
       print('Error occured while uplaoding to Firebase ${error.toString()}');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error occured while uplaoding'),
+          content: Text(
+            'Error occured while uploading audio',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white),
+          ),
+          duration: const Duration(milliseconds: 2000),
+          backgroundColor: Colors.red,
         ),
       );
     } finally {
