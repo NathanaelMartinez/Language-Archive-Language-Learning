@@ -32,14 +32,15 @@ class _ContentProviderScenarioScreenState
   final recorder = FlutterSoundRecorder();
   ScenarioDTO scenarioDTO = ScenarioDTO();
   late bool _isUploading;
-  late bool _isRecorded;
+  late bool _isPromptRecorded;
+  late bool _isAnswerRecorded;
   late bool _isRecording;
 
   File? promptAudio;
   File? answerAudio;
   String? recordedUrl;
-
-  Codec _codec = Codec.defaultCodec;
+  String? promptAudioUrl;
+  String? answerAudioUrl;
 
   @override
   void initState() {
@@ -49,7 +50,8 @@ class _ContentProviderScenarioScreenState
 
   void initializer() async {
     _isUploading = false;
-    _isRecorded = false;
+    _isPromptRecorded = false;
+    _isAnswerRecorded = false;
     _isRecording = false;
   }
 
@@ -66,15 +68,14 @@ class _ContentProviderScenarioScreenState
       throw RecordingPermissionException("Microphone permission not granted");
     await recorder.openRecorder();
     _isRecording = false;
-    _isRecorded = true;
     Directory directory = await getApplicationDocumentsDirectory();
     String filepath = directory.path +
         '/' +
         DateTime.now().millisecondsSinceEpoch.toString() +
-        '.aac';
+        '.mp4';
     await recorder.startRecorder(
-      toFile: 'audio',
-      codec: _codec,
+      toFile: filepath,
+      codec: Codec.aacMP4,
     );
   }
 
@@ -84,14 +85,17 @@ class _ContentProviderScenarioScreenState
         //var url = value;
         recordedUrl = value;
         debugPrint('path : -------- $recordedUrl');
-        _isRecorded = true;
         if (audioType == 'prompt') {
-          scenarioDTO.promptAudioUrl = recordedUrl;
+          _isPromptRecorded = true;
+          promptAudioUrl = recordedUrl;
         } else {
-          scenarioDTO.answerAudioUrl = recordedUrl;
+          _isAnswerRecorded = true;
+          answerAudioUrl = recordedUrl;
         }
       });
-    });
+    }).then(
+      (value) => recorder.stopRecorder(),
+    );
   }
 
   @override
@@ -156,22 +160,15 @@ class _ContentProviderScenarioScreenState
                   GestureDetector(
                     onLongPressStart: (details) {
                       _startRecord(
-                          audioType:
-                              'prompt'); // start recording when long pressed
+                        audioType: 'prompt',
+                      ); // start recording when long pressed
                     },
                     onLongPressUp: () {
                       _stopRecord(
-                          audioType: 'prompt'); // stop recording when released
-                      debugPrint('path : -------- $recordedUrl');
+                        audioType: 'prompt',
+                      ); // stop recording when released
                     },
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          backgroundColor: Colors.black),
-                      // TODO: Input audio recording feature
-                      onPressed: () {},
-                      child: Text('Hold to Record'),
-                    ),
+                    child: recordOrRecorded(audioType: 'prompt'),
                   )
                 ],
               ),
@@ -204,22 +201,15 @@ class _ContentProviderScenarioScreenState
                   GestureDetector(
                     onLongPressStart: (details) {
                       _startRecord(
-                          audioType:
-                              'answer'); // start recording when long pressed
+                        audioType: 'answer',
+                      ); // start recording when long pressed
                     },
                     onLongPressUp: () {
                       _stopRecord(
-                          audioType: 'answer'); // stop recording when released
-                      debugPrint('path : -------- $recordedUrl');
+                        audioType: 'answer',
+                      ); // stop recording when released
                     },
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          backgroundColor: Colors.black),
-                      // TODO: Input audio recording feature
-                      onPressed: () {},
-                      child: Text('Hold to Record'),
-                    ),
+                    child: recordOrRecorded(audioType: 'answer'),
                   )
                 ],
               ),
@@ -289,19 +279,23 @@ class _ContentProviderScenarioScreenState
       _isUploading = true;
     });
     try {
-      promptAudio = File(scenarioDTO.promptAudioUrl!);
-      var fileName = '${DateTime.now()}Prompt.aac';
+      promptAudio = File(promptAudioUrl!);
+      var fileName = '${DateTime.now()}Prompt.mp4';
       Reference storageReference =
           FirebaseStorage.instance.ref().child(fileName);
       UploadTask uploadTask = storageReference.putFile(promptAudio!);
       await uploadTask;
       scenarioDTO.promptAudioUrl = await storageReference.getDownloadURL();
-      answerAudio = File(scenarioDTO.answerAudioUrl!);
-      fileName = '${DateTime.now()}Answer.aac';
+      print('${scenarioDTO.promptAudioUrl}');
+
+      answerAudio = File(answerAudioUrl!);
+      fileName = '${DateTime.now()}Answer.mp4';
       storageReference = FirebaseStorage.instance.ref().child(fileName);
       uploadTask = storageReference.putFile(answerAudio!);
       await uploadTask;
       scenarioDTO.answerAudioUrl = await storageReference.getDownloadURL();
+      print('${scenarioDTO.answerAudioUrl}');
+
       // widget.onUploadComplete();
     } catch (error) {
       print('Error occured while uplaoding to Firebase ${error.toString()}');
@@ -320,6 +314,79 @@ class _ContentProviderScenarioScreenState
       setState(() {
         _isUploading = false;
       });
+    }
+  }
+
+  recordOrRecorded({required String audioType}) {
+    if (audioType == 'prompt' && _isPromptRecorded) {
+      return Row(
+        children: [
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor: Colors.green,
+            ),
+            child: Icon(Icons.check),
+            onPressed: () => setState(
+              () {},
+            ),
+          ),
+          SizedBox(
+            width: 20,
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor: Colors.red,
+            ),
+            child: Icon(Icons.cancel),
+            onPressed: () => setState(
+              () {
+                _isAnswerRecorded = false;
+              },
+            ),
+          )
+        ],
+        mainAxisAlignment: MainAxisAlignment.center,
+      );
+    } else if (audioType == 'answer' && _isAnswerRecorded) {
+      return Row(
+        children: [
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor: Colors.green,
+            ),
+            child: Icon(Icons.check),
+            onPressed: () => setState(
+              () {},
+            ),
+          ),
+          SizedBox(
+            width: 20,
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor: Colors.red,
+            ),
+            child: Icon(Icons.cancel),
+            onPressed: () => setState(
+              () {
+                _isAnswerRecorded = false;
+              },
+            ),
+          )
+        ],
+        mainAxisAlignment: MainAxisAlignment.center,
+      );
+    } else {
+      return ElevatedButton(
+        style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white, backgroundColor: Colors.black),
+        onPressed: () {},
+        child: Text('Hold to Record'),
+      );
     }
   }
 }
