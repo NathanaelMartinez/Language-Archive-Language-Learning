@@ -36,11 +36,15 @@ class _LanguageLearnerScenarioScreenState
             Image.network(
               widget.scenario.imageURL,
               scale: 1.0,
-              loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress)  {
+              loadingBuilder: (BuildContext context, Widget child,
+                  ImageChunkEvent? loadingProgress) {
                 if (loadingProgress == null) return child;
                 return Center(
                   child: CircularProgressIndicator(
-                    value: loadingProgress.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes! : null,
+                    value: loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded /
+                            loadingProgress.expectedTotalBytes!
+                        : null,
                     color: Colors.black,
                   ),
                 );

@@ -1,5 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-//import 'package:wasteagram/config.dart';
 
 class SettingsDrawer extends StatelessWidget {
   const SettingsDrawer({Key? key}) : super(key: key);
@@ -16,7 +16,8 @@ class SettingsDrawer extends StatelessWidget {
             // Logout button
             ListTile(
               title: TextButton(
-                onPressed: () {
+                onPressed: () async {
+                  await FirebaseAuth.instance.signOut();
                   Navigator.of(context).popUntil((route) => route.isFirst);
                 },
                 child: const Text(

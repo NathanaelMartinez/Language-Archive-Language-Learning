@@ -19,7 +19,11 @@ class _ContentProviderSelectionScreenState
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: FirebaseFirestore.instance.collection('scenarios').where('isComplete', isEqualTo: false).where('language', isEqualTo: '${widget.userSelection.language}').snapshots(),
+      stream: FirebaseFirestore.instance
+          .collection('scenarios')
+          .where('isComplete', isEqualTo: false)
+          .where('language', isEqualTo: '${widget.userSelection.language}')
+          .snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
           return LanguageLearningAppScaffold(

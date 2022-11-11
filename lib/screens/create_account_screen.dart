@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'selection_screen.dart';
 
@@ -7,6 +8,17 @@ class CreateAccountScreen extends StatefulWidget {
 }
 
 class _CreateAccountScreenState extends State<CreateAccountScreen> {
+  final emailInput = TextEditingController();
+  final passwordInput = TextEditingController();
+  bool signUpValid = false;
+
+  @override
+  void dispose() {
+    emailInput.dispose();
+    passwordInput.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(body: OrientationBuilder(builder: (context, orientation) {
@@ -37,6 +49,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 color: Colors.black),
             child: Column(children: [
               TextField(
+                controller: emailInput,
                 style: TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                     enabledBorder: OutlineInputBorder(
@@ -50,6 +63,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
               ),
               const SizedBox(height: 10),
               TextField(
+                controller: passwordInput,
                 obscureText: true,
                 style: TextStyle(color: Colors.white),
                 decoration: InputDecoration(
@@ -62,21 +76,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     labelText: 'Password',
                     hintText: 'Please enter your password'),
               ),
-              const SizedBox(height: 10),
-              TextField(
-                obscureText: true,
-                style: TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white)),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white)),
-                  labelStyle: TextStyle(color: Colors.white),
-                  hintStyle: TextStyle(color: Colors.white),
-                  labelText: 'Confirm Password',
-                  hintText: 'Please re-enter your password',
-                ),
-              ),
               const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -85,13 +84,67 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
                           backgroundColor: Colors.green),
-                      // TODO: Will need to update for Auth0 login
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: ((context) => SelectionScreen())),
-                        );
+                      onPressed: () async {
+                        try {
+                          final credential = await FirebaseAuth.instance
+                              .createUserWithEmailAndPassword(
+                            email: emailInput.text,
+                            password: passwordInput.text,
+                          );
+                          signUpValid = true;
+                        } on FirebaseAuthException catch (e) {
+                          if (e.code == 'weak-password') {
+                            final missingInput = const SnackBar(
+                              content: Text(
+                                'The password provided is too weak.',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              duration: const Duration(milliseconds: 2000),
+                              backgroundColor: Colors.red,
+                            );
+                            signUpValid = false;
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(missingInput);
+                          } else if (e.code == 'email-already-in-use') {
+                            final missingInput = const SnackBar(
+                              content: Text(
+                                'The account already exists for that email.',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              duration: const Duration(milliseconds: 2000),
+                              backgroundColor: Colors.red,
+                            );
+                            signUpValid = false;
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(missingInput);
+                          }
+                        } catch (e) {
+                          print(e);
+                        }
+                        if (emailInput.text.isEmpty ||
+                            passwordInput.text.isEmpty) {
+                          final missingInput = const SnackBar(
+                            content: Text(
+                              'Please fill in all fields.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            duration: const Duration(milliseconds: 2000),
+                            backgroundColor: Colors.red,
+                          );
+                          signUpValid = false;
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(missingInput);
+                        }
+                        if (signUpValid) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: ((context) => SelectionScreen())),
+                          );
+                        }
                       },
                       child: const Text('Create your account')),
                   SizedBox(width: 10),
@@ -126,7 +179,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             ),
           )),
           // Entry Container
-          // TODO: Implement form later on
           ListTile(
               title: Container(
             margin:
@@ -142,6 +194,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 children: [
                   Expanded(
                     child: TextField(
+                      controller: emailInput,
                       style: TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
@@ -162,6 +215,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 children: [
                   Expanded(
                     child: TextField(
+                      controller: passwordInput,
                       obscureText: true,
                       style: TextStyle(color: Colors.white),
                       decoration: InputDecoration(
@@ -177,28 +231,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   )
                 ],
               ),
-              const SizedBox(height: 10),
-              // Confirm password confirmation box
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      obscureText: true,
-                      style: TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white)),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white)),
-                        labelStyle: TextStyle(color: Colors.white),
-                        hintStyle: TextStyle(color: Colors.white),
-                        labelText: 'Confirm Password',
-                        hintText: 'Please re-enter your password',
-                      ),
-                    ),
-                  )
-                ],
-              ),
               const SizedBox(height: 20),
               // Buttons
               Row(
@@ -209,13 +241,67 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.white,
                             backgroundColor: Colors.green),
-                        // TODO: Will need to update for Auth0 sign in
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: ((context) => SelectionScreen())),
-                          );
+                        onPressed: () async {
+                          try {
+                            final credential = await FirebaseAuth.instance
+                                .createUserWithEmailAndPassword(
+                              email: emailInput.text,
+                              password: passwordInput.text,
+                            );
+                            signUpValid = true;
+                          } on FirebaseAuthException catch (e) {
+                            if (e.code == 'weak-password') {
+                              final missingInput = const SnackBar(
+                                content: Text(
+                                  'The password provided is too weak.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                duration: const Duration(milliseconds: 2000),
+                                backgroundColor: Colors.red,
+                              );
+                              signUpValid = false;
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(missingInput);
+                            } else if (e.code == 'email-already-in-use') {
+                              final missingInput = const SnackBar(
+                                content: Text(
+                                  'The account already exists for that email.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                duration: const Duration(milliseconds: 2000),
+                                backgroundColor: Colors.red,
+                              );
+                              signUpValid = false;
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(missingInput);
+                            }
+                          } catch (e) {
+                            print(e);
+                          }
+                          if (emailInput.text.isEmpty ||
+                              passwordInput.text.isEmpty) {
+                            final missingInput = const SnackBar(
+                              content: Text(
+                                'Please fill in all fields.',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              duration: const Duration(milliseconds: 2000),
+                              backgroundColor: Colors.red,
+                            );
+                            signUpValid = false;
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(missingInput);
+                          }
+                          if (signUpValid) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: ((context) => SelectionScreen())),
+                            );
+                          }
                         },
                         child: const Text('Create your account')),
                   ),

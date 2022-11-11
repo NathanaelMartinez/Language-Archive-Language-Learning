@@ -126,14 +126,16 @@ class _SelectionScreenState extends State<SelectionScreen> {
                             context,
                             MaterialPageRoute(
                                 builder: ((context) =>
-                                    LanguageLearnerSelectionScreen(userSelection: currSelection))),
+                                    LanguageLearnerSelectionScreen(
+                                        userSelection: currSelection))),
                           );
                         } else {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: ((context) =>
-                                    ContentProviderSelectionScreen(userSelection: currSelection))),
+                                    ContentProviderSelectionScreen(
+                                        userSelection: currSelection))),
                           );
                         }
                       } else {
@@ -238,14 +240,16 @@ class _SelectionScreenState extends State<SelectionScreen> {
                         context,
                         MaterialPageRoute(
                             builder: ((context) =>
-                                LanguageLearnerSelectionScreen(userSelection: currSelection))),
+                                LanguageLearnerSelectionScreen(
+                                    userSelection: currSelection))),
                       );
                     } else {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: ((context) =>
-                                ContentProviderSelectionScreen(userSelection: currSelection))),
+                                ContentProviderSelectionScreen(
+                                    userSelection: currSelection))),
                       );
                     }
                   } else {
