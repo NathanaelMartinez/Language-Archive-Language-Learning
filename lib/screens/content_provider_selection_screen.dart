@@ -19,7 +19,11 @@ class _ContentProviderSelectionScreenState
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: FirebaseFirestore.instance.collection('scenarios').where('isComplete', isEqualTo: false).where('language', isEqualTo: '${widget.userSelection.language}').snapshots(),
+      stream: FirebaseFirestore.instance
+          .collection('scenarios')
+          .where('isComplete', isEqualTo: false)
+          .where('language', isEqualTo: '${widget.userSelection.language}')
+          .snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
           return LanguageLearningAppScaffold(
@@ -36,7 +40,8 @@ class _ContentProviderSelectionScreenState
                     answer: entry['answer'],
                     translatedAnswer: entry['translatedAnswer'],
                     translatedPrompt: entry['translatedPrompt'],
-                    isComplete: entry['isComplete']);
+                    isComplete: entry['isComplete'],
+                    docRef: entry.id);
                 return ListTile(
                   title: Container(
                     padding: const EdgeInsets.all(25),
@@ -44,32 +49,34 @@ class _ContentProviderSelectionScreenState
                         border: Border.all(color: Colors.black, width: 2),
                         borderRadius: BorderRadius.all(Radius.circular(5)),
                         color: Colors.black),
-                    child: Column(children: [
-                      Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text('${scenario.prompt}',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.white))),
-                      SizedBox(height: 10),
-                      Align(
-                          alignment: Alignment.centerLeft,
-                          child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  foregroundColor: Colors.black,
-                                  backgroundColor: Colors.white),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: ((context) =>
-                                          ContentProviderScenarioScreen(
-                                              scenario: scenario))),
-                                );
-                              },
-                              child: const Text('View')))
-                    ]),
+                    child: Column(
+                      children: [
+                        Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text('${scenario.prompt}',
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white))),
+                        SizedBox(height: 10),
+                        Align(
+                            alignment: Alignment.centerLeft,
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    foregroundColor: Colors.black,
+                                    backgroundColor: Colors.white),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: ((context) =>
+                                            ContentProviderScenarioScreen(
+                                                scenario: scenario))),
+                                  );
+                                },
+                                child: const Text('View')))
+                      ],
+                    ),
                   ),
                 );
               },
@@ -80,10 +87,11 @@ class _ContentProviderSelectionScreenState
             title: 'Contribute',
             subtitle: 'Help Answer a Scenario',
             child: Center(
-                child: Icon(
-              Icons.school,
-              size: 120.0,
-            )),
+              child: Icon(
+                Icons.school,
+                size: 120.0,
+              ),
+            ),
           );
         } else {
           return const LanguageLearningAppScaffold(

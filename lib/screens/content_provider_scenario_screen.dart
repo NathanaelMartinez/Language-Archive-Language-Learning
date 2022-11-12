@@ -30,11 +30,13 @@ class _ContentProviderScenarioScreenState
   var textAnswerController = TextControllerState();
   final formKey = GlobalKey<FormState>();
   final recorder = FlutterSoundRecorder();
+  final player = FlutterSoundPlayer();
   ScenarioDTO scenarioDTO = ScenarioDTO();
   late bool _isUploading;
   late bool _isPromptRecorded;
   late bool _isAnswerRecorded;
   late bool _isRecording;
+  late bool _isPlaying;
 
   File? promptAudio;
   File? answerAudio;
@@ -45,14 +47,11 @@ class _ContentProviderScenarioScreenState
   @override
   void initState() {
     super.initState();
-    initializer();
-  }
-
-  void initializer() async {
     _isUploading = false;
     _isPromptRecorded = false;
     _isAnswerRecorded = false;
     _isRecording = false;
+    _isPlaying = false;
   }
 
   @override
@@ -93,9 +92,26 @@ class _ContentProviderScenarioScreenState
           answerAudioUrl = recordedUrl;
         }
       });
-    }).then(
-      (value) => recorder.stopRecorder(),
-    );
+    });
+    await recorder.closeRecorder();
+  }
+
+  _startPlayback(audioURL) async {
+    if (!_isPlaying) {
+      _isPlaying = true;
+      await player.openPlayer();
+      await player.startPlayer(
+        fromURI: audioURL,
+        codec: Codec.aacMP4,
+        whenFinished: () => setState(() {
+          _isPlaying = false;
+        }),
+      );
+    } else {
+      await player.stopPlayer();
+      await player.closePlayer();
+    }
+    setState(() {});
   }
 
   @override
@@ -251,6 +267,7 @@ class _ContentProviderScenarioScreenState
                           scenarioDTO.translatedPrompt =
                               textPromptController.formControler.text;
                           _uploadAudioFiles();
+                          print(widget.scenario.docRef);
                         }
                       },
                       child: Text('Submit')),
@@ -280,7 +297,7 @@ class _ContentProviderScenarioScreenState
     });
     try {
       promptAudio = File(promptAudioUrl!);
-      var fileName = '${DateTime.now()}Prompt.mp4';
+      var fileName = '${DateTime.now()}-prompt.mp4';
       Reference storageReference =
           FirebaseStorage.instance.ref().child(fileName);
       UploadTask uploadTask = storageReference.putFile(promptAudio!);
@@ -289,7 +306,7 @@ class _ContentProviderScenarioScreenState
       print('${scenarioDTO.promptAudioUrl}');
 
       answerAudio = File(answerAudioUrl!);
-      fileName = '${DateTime.now()}Answer.mp4';
+      fileName = '${DateTime.now()}-answer.mp4';
       storageReference = FirebaseStorage.instance.ref().child(fileName);
       uploadTask = storageReference.putFile(answerAudio!);
       await uploadTask;
@@ -326,23 +343,23 @@ class _ContentProviderScenarioScreenState
               foregroundColor: Colors.white,
               backgroundColor: Colors.green,
             ),
-            child: Icon(Icons.check),
-            onPressed: () => setState(
-              () {},
-            ),
+            child: Icon(Icons.play_arrow),
+            onPressed: () {
+              _startPlayback(promptAudioUrl);
+            },
           ),
           SizedBox(
             width: 20,
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.white,
-              backgroundColor: Colors.red,
-            ),
-            child: Icon(Icons.cancel),
+                side: BorderSide(color: Colors.red),
+                foregroundColor: Colors.red,
+                backgroundColor: Colors.white),
+            child: Icon(Icons.cancel_outlined),
             onPressed: () => setState(
               () {
-                _isAnswerRecorded = false;
+                _isPromptRecorded = false;
               },
             ),
           )
@@ -357,10 +374,10 @@ class _ContentProviderScenarioScreenState
               foregroundColor: Colors.white,
               backgroundColor: Colors.green,
             ),
-            child: Icon(Icons.check),
-            onPressed: () => setState(
-              () {},
-            ),
+            child: Icon(Icons.play_arrow),
+            onPressed: () {
+              _startPlayback(answerAudioUrl);
+            },
           ),
           SizedBox(
             width: 20,
@@ -385,7 +402,7 @@ class _ContentProviderScenarioScreenState
         style: ElevatedButton.styleFrom(
             foregroundColor: Colors.white, backgroundColor: Colors.black),
         onPressed: () {},
-        child: Text('Hold to Record'),
+        child: Text('Hold to record $audioType'),
       );
     }
   }
