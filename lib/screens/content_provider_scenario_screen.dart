@@ -90,6 +90,7 @@ class _ContentProviderScenarioScreenState
         } else {
           _isAnswerRecorded = true;
           answerAudioUrl = recordedUrl;
+          print(answerAudioUrl);
         }
       });
     });
@@ -267,7 +268,12 @@ class _ContentProviderScenarioScreenState
                           scenarioDTO.translatedPrompt =
                               textPromptController.formControler.text;
                           _uploadAudioFiles();
-                          print(widget.scenario.docRef);
+                          scenarioDTO.isComplete = true;
+                          FirebaseFirestore.instance
+                              .collection('scenarios')
+                              .doc(widget.scenario.docRef)
+                              .update(scenarioDTO.toMap());
+                          Navigator.pop(context);
                         }
                       },
                       child: Text('Submit')),
@@ -303,7 +309,6 @@ class _ContentProviderScenarioScreenState
       UploadTask uploadTask = storageReference.putFile(promptAudio!);
       await uploadTask;
       scenarioDTO.promptAudioUrl = await storageReference.getDownloadURL();
-      print('${scenarioDTO.promptAudioUrl}');
 
       answerAudio = File(answerAudioUrl!);
       fileName = '${DateTime.now()}-answer.mp4';
@@ -311,7 +316,6 @@ class _ContentProviderScenarioScreenState
       uploadTask = storageReference.putFile(answerAudio!);
       await uploadTask;
       scenarioDTO.answerAudioUrl = await storageReference.getDownloadURL();
-      print('${scenarioDTO.answerAudioUrl}');
 
       // widget.onUploadComplete();
     } catch (error) {
@@ -384,10 +388,10 @@ class _ContentProviderScenarioScreenState
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.white,
-              backgroundColor: Colors.red,
-            ),
-            child: Icon(Icons.cancel),
+                side: BorderSide(color: Colors.red),
+                foregroundColor: Colors.red,
+                backgroundColor: Colors.white),
+            child: Icon(Icons.cancel_outlined),
             onPressed: () => setState(
               () {
                 _isAnswerRecorded = false;

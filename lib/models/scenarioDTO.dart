@@ -3,22 +3,22 @@ class ScenarioDTO {
   String? answerAudioUrl;
   String? translatedPrompt;
   String? translatedAnswer;
-  bool? isCompleted;
+  bool? isComplete;
 
   ScenarioDTO(
       {this.promptAudioUrl,
       this.answerAudioUrl,
       this.translatedPrompt,
       this.translatedAnswer,
-      this.isCompleted});
+      this.isComplete});
 
-  Map<String, dynamic> toMap() {
+  Map<String, Object?> toMap() {
     return {
       'promptAudioUrl': promptAudioUrl,
       'answerAudioUrl': answerAudioUrl,
       'translatedPrompt': translatedPrompt,
       'translatedAnswer': translatedAnswer,
-      'isCompleted': isCompleted
+      'isComplete': isComplete
     };
   }
 }
