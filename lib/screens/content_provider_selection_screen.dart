@@ -60,21 +60,37 @@ class _ContentProviderSelectionScreenState
                                     color: Colors.white))),
                         SizedBox(height: 10),
                         Align(
-                            alignment: Alignment.centerLeft,
-                            child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    foregroundColor: Colors.black,
-                                    backgroundColor: Colors.white),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: ((context) =>
-                                            ContentProviderScenarioScreen(
-                                                scenario: scenario))),
-                                  );
-                                },
-                                child: const Text('View')))
+                          alignment: Alignment.centerLeft,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.black,
+                                backgroundColor: Colors.white),
+                            onPressed: () async {
+                              bool result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: ((context) =>
+                                      ContentProviderScenarioScreen(
+                                          scenario: scenario)),
+                                ),
+                              );
+                              if (result == true) {
+                                final submitSuccess = const SnackBar(
+                                  content: Text(
+                                    'Submission success! Thanks for your contribution!.',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  duration: const Duration(milliseconds: 2000),
+                                  backgroundColor: Colors.green,
+                                );
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    submitSuccess); //Show SnackBar
+                              }
+                            },
+                            child: const Text('View'),
+                          ),
+                        )
                       ],
                     ),
                   ),

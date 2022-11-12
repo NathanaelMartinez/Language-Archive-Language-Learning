@@ -125,175 +125,181 @@ class _ContentProviderScenarioScreenState
 
   Widget _contentProviderScenarioDisplay() {
     return Center(
-      child: ListView(children: [
-        ListTile(
-          title: Container(
-            padding: const EdgeInsets.all(25),
-            child: Column(children: [
-              // Image Group
-              Image.network(
-                widget.scenario.imageURL,
-                scale: 1.0,
-                loadingBuilder: (BuildContext context, Widget child,
-                    ImageChunkEvent? loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return Center(
-                    child: CircularProgressIndicator(
-                      value: loadingProgress.expectedTotalBytes != null
-                          ? loadingProgress.cumulativeBytesLoaded /
-                              loadingProgress.expectedTotalBytes!
-                          : null,
-                      color: Colors.black,
-                    ),
-                  );
-                },
-              ),
-              SizedBox(height: 30),
-              // Prompt Group
-              Column(
+      child: ListView(
+        children: [
+          ListTile(
+            title: Container(
+              padding: const EdgeInsets.all(25),
+              child: Column(
                 children: [
-                  Text(
-                    'Prompt',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  SizedBox(height: 5),
-                  Text(
-                    '${widget.scenario.prompt}',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
-                  ),
-                  SizedBox(height: 10),
-                  TextField(
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Prompt Translation',
-                        hintText:
-                            'Please enter the ${widget.scenario.language} translation'),
-                    controller: textPromptController.formControler,
-                  ),
-                  SizedBox(height: 5),
-                  GestureDetector(
-                    onLongPressStart: (details) {
-                      _startRecord(
-                        audioType: 'prompt',
-                      ); // start recording when long pressed
+                  // Image Group
+                  Image.network(
+                    widget.scenario.imageURL,
+                    scale: 1.0,
+                    loadingBuilder: (BuildContext context, Widget child,
+                        ImageChunkEvent? loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Center(
+                        child: CircularProgressIndicator(
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                                  loadingProgress.expectedTotalBytes!
+                              : null,
+                          color: Colors.black,
+                        ),
+                      );
                     },
-                    onLongPressUp: () {
-                      _stopRecord(
-                        audioType: 'prompt',
-                      ); // stop recording when released
-                    },
-                    child: recordOrRecorded(audioType: 'prompt'),
+                  ),
+                  SizedBox(height: 30),
+                  // Prompt Group
+                  Column(
+                    children: [
+                      Text(
+                        'Prompt',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        '${widget.scenario.prompt}',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w500),
+                      ),
+                      SizedBox(height: 10),
+                      TextField(
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Prompt Translation',
+                            hintText:
+                                'Please enter the ${widget.scenario.language} translation'),
+                        controller: textPromptController.formControler,
+                      ),
+                      SizedBox(height: 5),
+                      GestureDetector(
+                        onLongPressStart: (details) {
+                          _startRecord(
+                            audioType: 'prompt',
+                          ); // start recording when long pressed
+                        },
+                        onLongPressUp: () {
+                          _stopRecord(
+                            audioType: 'prompt',
+                          ); // stop recording when released
+                        },
+                        child: recordOrRecorded(audioType: 'prompt'),
+                      )
+                    ],
+                  ),
+                  SizedBox(height: 15),
+                  // Answer Group
+                  Column(
+                    children: [
+                      Text(
+                        'Answer',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        '${widget.scenario.answer}',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w500),
+                      ),
+                      SizedBox(height: 10),
+                      TextField(
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Answer Translation',
+                            hintText:
+                                'Please enter the ${widget.scenario.language} translation'),
+                        controller: textAnswerController.formControler,
+                      ),
+                      SizedBox(height: 5),
+                      GestureDetector(
+                        onLongPressStart: (details) {
+                          _startRecord(
+                            audioType: 'answer',
+                          ); // start recording when long pressed
+                        },
+                        onLongPressUp: () {
+                          _stopRecord(
+                            audioType: 'answer',
+                          ); // stop recording when released
+                        },
+                        child: recordOrRecorded(audioType: 'answer'),
+                      )
+                    ],
+                  ),
+                  // Button Group
+                  SizedBox(height: 30),
+                  Divider(
+                    color: Colors.black,
+                    height: 5,
+                    thickness: 1,
+                    indent: 15,
+                    endIndent: 15,
+                  ),
+                  SizedBox(height: 30),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.green),
+                          onPressed: () async {
+                            if (textAnswerController.formControler.text == '' ||
+                                textPromptController.formControler.text == '') {
+                              final incorrectInput = const SnackBar(
+                                content: Text(
+                                  'Please input translation for both prompt and answer.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                duration: const Duration(milliseconds: 2000),
+                                backgroundColor: Colors.red,
+                              );
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(incorrectInput);
+                            } else {
+                              // TODO: Add database input functionality
+                              scenarioDTO.translatedAnswer =
+                                  textAnswerController.formControler.text;
+                              scenarioDTO.translatedPrompt =
+                                  textPromptController.formControler.text;
+                              _uploadAudioFiles();
+                              scenarioDTO.isComplete = true;
+                              FirebaseFirestore.instance
+                                  .collection('scenarios')
+                                  .doc(widget.scenario.docRef)
+                                  .update(scenarioDTO.toMap());
+                              Navigator.of(context).pop(true);
+                            }
+                          },
+                          child: Text('Submit')),
+                      SizedBox(width: 10),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            side: BorderSide(color: Colors.red),
+                            foregroundColor: Colors.red,
+                            backgroundColor: Colors.white),
+                        onPressed: () {
+                          Navigator.of(context).pop(false);
+                        },
+                        child: const Text('Cancel'),
+                      )
+                    ],
                   )
                 ],
               ),
-              SizedBox(height: 15),
-              // Answer Group
-              Column(
-                children: [
-                  Text(
-                    'Answer',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  SizedBox(height: 5),
-                  Text(
-                    '${widget.scenario.answer}',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
-                  ),
-                  SizedBox(height: 10),
-                  TextField(
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Answer Translation',
-                        hintText:
-                            'Please enter the ${widget.scenario.language} translation'),
-                    controller: textAnswerController.formControler,
-                  ),
-                  SizedBox(height: 5),
-                  GestureDetector(
-                    onLongPressStart: (details) {
-                      _startRecord(
-                        audioType: 'answer',
-                      ); // start recording when long pressed
-                    },
-                    onLongPressUp: () {
-                      _stopRecord(
-                        audioType: 'answer',
-                      ); // stop recording when released
-                    },
-                    child: recordOrRecorded(audioType: 'answer'),
-                  )
-                ],
-              ),
-              // Button Group
-              SizedBox(height: 30),
-              Divider(
-                color: Colors.black,
-                height: 5,
-                thickness: 1,
-                indent: 15,
-                endIndent: 15,
-              ),
-              SizedBox(height: 30),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          backgroundColor: Colors.green),
-                      onPressed: () async {
-                        if (textAnswerController.formControler.text == '' ||
-                            textPromptController.formControler.text == '') {
-                          final incorrectInput = const SnackBar(
-                            content: Text(
-                              'Please input translation for both prompt and answer.',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            duration: const Duration(milliseconds: 2000),
-                            backgroundColor: Colors.red,
-                          );
-                          ScaffoldMessenger.of(context)
-                              .showSnackBar(incorrectInput);
-                        } else {
-                          // TODO: Add database input functionality
-                          scenarioDTO.translatedAnswer =
-                              textAnswerController.formControler.text;
-                          scenarioDTO.translatedPrompt =
-                              textPromptController.formControler.text;
-                          _uploadAudioFiles();
-                          scenarioDTO.isComplete = true;
-                          FirebaseFirestore.instance
-                              .collection('scenarios')
-                              .doc(widget.scenario.docRef)
-                              .update(scenarioDTO.toMap());
-                          Navigator.pop(context);
-                        }
-                      },
-                      child: Text('Submit')),
-                  SizedBox(width: 10),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        side: BorderSide(color: Colors.red),
-                        foregroundColor: Colors.red,
-                        backgroundColor: Colors.white),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text('Cancel'),
-                  )
-                ],
-              )
-            ]),
+            ),
           ),
-        ),
-      ]),
+        ],
+      ),
     );
   }
 
@@ -332,9 +338,7 @@ class _ContentProviderScenarioScreenState
         ),
       );
     } finally {
-      setState(() {
-        _isUploading = false;
-      });
+      _isUploading = false;
     }
   }
 
