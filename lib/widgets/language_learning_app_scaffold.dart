@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cs467_language_learning_app/widgets/settings_drawer.dart';
 
@@ -8,12 +9,14 @@ class LanguageLearningAppScaffold extends StatelessWidget {
     required this.child,
     this.backButton,
     required this.subtitle,
+    required this.userInfo
   });
 
   final String title;
   final String subtitle;
   final Widget child;
   final Widget? backButton;
+  final userInfo;
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +47,7 @@ class LanguageLearningAppScaffold extends StatelessWidget {
         iconTheme: IconThemeData(color: Colors.black),
         elevation: 0,
       ),
-      endDrawer: SettingsDrawer(),
+      endDrawer: SettingsDrawer(userInfo: userInfo,),
       body: child,
     );
   }

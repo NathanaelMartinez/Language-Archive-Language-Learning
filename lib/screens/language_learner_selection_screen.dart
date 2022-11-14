@@ -1,4 +1,5 @@
 import 'package:cs467_language_learning_app/models/userSelection.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -7,8 +8,9 @@ import 'package:cs467_language_learning_app/widgets/language_learning_app_scaffo
 import 'package:cs467_language_learning_app/models/scenario.dart';
 
 class LanguageLearnerSelectionScreen extends StatefulWidget {
-  LanguageLearnerSelectionScreen({super.key, required this.userSelection});
+  LanguageLearnerSelectionScreen({super.key, required this.userSelection, required this.userInfo});
   UserSelection userSelection;
+  final userInfo;
 
   @override
   State<LanguageLearnerSelectionScreen> createState() =>
@@ -70,7 +72,7 @@ class _LanguageLearnerSelectionScreenState
                                   MaterialPageRoute(
                                       builder: ((context) =>
                                           LanguageLearnerScenarioScreen(
-                                              scenario: scenario))),
+                                              scenario: scenario, userInfo: widget.userInfo))),
                                 );
                               },
                               child: const Text('View')))
@@ -79,9 +81,10 @@ class _LanguageLearnerSelectionScreenState
                 );
               },
             ),
+            userInfo: widget.userInfo,
           );
         } else if (snapshot.hasData && snapshot.data!.docs.isEmpty) {
-          return const LanguageLearningAppScaffold(
+          return LanguageLearningAppScaffold(
             title: 'Learn',
             subtitle: 'Practice a Scenario',
             child: Center(
@@ -89,12 +92,14 @@ class _LanguageLearnerSelectionScreenState
               Icons.school,
               size: 120.0,
             )),
+            userInfo: widget.userInfo,
           );
         } else {
-          return const LanguageLearningAppScaffold(
+          return LanguageLearningAppScaffold(
             title: 'Learn',
             subtitle: 'Practice a Scenario',
             child: Center(child: CircularProgressIndicator()),
+            userInfo: widget.userInfo,
           );
         }
       },

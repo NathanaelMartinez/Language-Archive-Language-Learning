@@ -6,8 +6,9 @@ import 'package:cs467_language_learning_app/widgets/language_learning_app_scaffo
 import 'package:cs467_language_learning_app/models/scenario.dart';
 
 class ContentProviderSelectionScreen extends StatefulWidget {
-  ContentProviderSelectionScreen({super.key, required this.userSelection});
+  ContentProviderSelectionScreen({super.key, required this.userSelection, required this.userInfo});
   UserSelection userSelection;
+  final userInfo;
 
   @override
   State<ContentProviderSelectionScreen> createState() =>
@@ -69,7 +70,7 @@ class _ContentProviderSelectionScreenState
                                   MaterialPageRoute(
                                       builder: ((context) =>
                                           ContentProviderScenarioScreen(
-                                              scenario: scenario))),
+                                              scenario: scenario, userInfo: widget.userInfo,))),
                                 );
                               },
                               child: const Text('View')))
@@ -78,9 +79,10 @@ class _ContentProviderSelectionScreenState
                 );
               },
             ),
+            userInfo: widget.userInfo,
           );
         } else if (snapshot.hasData && snapshot.data!.docs.isEmpty) {
-          return const LanguageLearningAppScaffold(
+          return LanguageLearningAppScaffold(
             title: 'Contribute',
             subtitle: 'Help Answer a Scenario',
             child: Center(
@@ -88,12 +90,14 @@ class _ContentProviderSelectionScreenState
               Icons.school,
               size: 120.0,
             )),
+            userInfo: widget.userInfo,
           );
         } else {
-          return const LanguageLearningAppScaffold(
+          return LanguageLearningAppScaffold(
             title: 'Contribute',
             subtitle: 'Help Answer a Scenario',
             child: Center(child: CircularProgressIndicator()),
+            userInfo: widget.userInfo,
           );
         }
       },
