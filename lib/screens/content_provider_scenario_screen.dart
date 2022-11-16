@@ -80,21 +80,19 @@ class _ContentProviderScenarioScreenState
 
   _stopRecord({required String audioType}) async {
     await recorder.stopRecorder().then((value) {
+      recordedUrl = value;
       setState(() {
-        //var url = value;
-        recordedUrl = value;
-        debugPrint('path : -------- $recordedUrl');
+        debugPrint('PATH : -------- $recordedUrl');
         if (audioType == 'prompt') {
           _isPromptRecorded = true;
           promptAudioUrl = recordedUrl;
         } else {
           _isAnswerRecorded = true;
           answerAudioUrl = recordedUrl;
-          print(answerAudioUrl);
         }
+        recorder.closeRecorder();
       });
     });
-    await recorder.closeRecorder();
   }
 
   _startPlayback(audioURL) async {
@@ -248,39 +246,44 @@ class _ContentProviderScenarioScreenState
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor: Colors.green),
-                          onPressed: () async {
-                            if (textAnswerController.formControler.text == '' ||
-                                textPromptController.formControler.text == '') {
-                              final incorrectInput = const SnackBar(
-                                content: Text(
-                                  'Please input translation for both prompt and answer.',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                duration: const Duration(milliseconds: 2000),
-                                backgroundColor: Colors.red,
-                              );
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(incorrectInput);
-                            } else {
-                              // TODO: Add database input functionality
-                              scenarioDTO.translatedAnswer =
-                                  textAnswerController.formControler.text;
-                              scenarioDTO.translatedPrompt =
-                                  textPromptController.formControler.text;
-                              _uploadAudioFiles();
-                              scenarioDTO.isComplete = true;
-                              FirebaseFirestore.instance
-                                  .collection('scenarios')
-                                  .doc(widget.scenario.docRef)
-                                  .update(scenarioDTO.toMap());
-                              Navigator.of(context).pop(true);
-                            }
-                          },
-                          child: Text('Submit')),
+                        style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor: Colors.green),
+                        onPressed: () async {
+                          debugPrint('$scenarioDTO');
+                          if (textAnswerController.formControler.text == '' ||
+                              textPromptController.formControler.text == '' ||
+                              answerAudioUrl == null ||
+                              promptAudioUrl == null ||
+                              answerAudioUrl == '' ||
+                              promptAudioUrl == '') {
+                            final incorrectInput = const SnackBar(
+                              content: Text(
+                                'Please input translation for both prompt and answer.',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              duration: const Duration(milliseconds: 2000),
+                              backgroundColor: Colors.red,
+                            );
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(incorrectInput);
+                          } else {
+                            scenarioDTO.translatedAnswer =
+                                textAnswerController.formControler.text;
+                            scenarioDTO.translatedPrompt =
+                                textPromptController.formControler.text;
+                            await _uploadAudioFiles();
+                            scenarioDTO.isComplete = true;
+                            FirebaseFirestore.instance
+                                .collection('scenarios')
+                                .doc(widget.scenario.docRef)
+                                .update(scenarioDTO.toMap());
+                            Navigator.of(context).pop(true);
+                          }
+                        },
+                        child: Text('Submit'),
+                      ),
                       SizedBox(width: 10),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
@@ -309,19 +312,23 @@ class _ContentProviderScenarioScreenState
     });
     try {
       promptAudio = File(promptAudioUrl!);
-      var fileName = '${DateTime.now()}-prompt.mp4';
+      var fileName =
+          '${DateTime.now()}-${widget.scenario.language}-${widget.scenario.prompt}-prompt.mp4';
       Reference storageReference =
           FirebaseStorage.instance.ref().child(fileName);
       UploadTask uploadTask = storageReference.putFile(promptAudio!);
       await uploadTask;
       scenarioDTO.promptAudioUrl = await storageReference.getDownloadURL();
+      debugPrint('PROMPT URL -------------- ${scenarioDTO.promptAudioUrl}');
 
       answerAudio = File(answerAudioUrl!);
-      fileName = '${DateTime.now()}-answer.mp4';
+      fileName =
+          '${DateTime.now()}-${widget.scenario.language}-${widget.scenario.answer}-answer.mp4';
       storageReference = FirebaseStorage.instance.ref().child(fileName);
       uploadTask = storageReference.putFile(answerAudio!);
       await uploadTask;
       scenarioDTO.answerAudioUrl = await storageReference.getDownloadURL();
+      debugPrint('ANSWER URL -------------- ${scenarioDTO.answerAudioUrl}');
 
       // widget.onUploadComplete();
     } catch (error) {
@@ -368,6 +375,7 @@ class _ContentProviderScenarioScreenState
             onPressed: () => setState(
               () {
                 _isPromptRecorded = false;
+                promptAudioUrl = '';
               },
             ),
           )
@@ -399,6 +407,7 @@ class _ContentProviderScenarioScreenState
             onPressed: () => setState(
               () {
                 _isAnswerRecorded = false;
+                answerAudioUrl = '';
               },
             ),
           )
