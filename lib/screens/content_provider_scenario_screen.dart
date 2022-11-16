@@ -15,7 +15,7 @@ import 'package:cs467_language_learning_app/widgets/text_controller.dart';
 
 class ContentProviderScenarioScreen extends StatefulWidget {
   ContentProviderScenarioScreen({super.key, required this.scenario});
-  Scenario scenario;
+  final Scenario scenario;
 
   @override
   State<ContentProviderScenarioScreen> createState() =>
