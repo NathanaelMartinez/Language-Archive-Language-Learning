@@ -14,8 +14,10 @@ import 'package:cs467_language_learning_app/widgets/language_learning_app_scaffo
 import 'package:cs467_language_learning_app/widgets/text_controller.dart';
 
 class ContentProviderScenarioScreen extends StatefulWidget {
-  ContentProviderScenarioScreen({super.key, required this.scenario});
+  ContentProviderScenarioScreen(
+      {super.key, required this.scenario, required this.userInfo});
   final Scenario scenario;
+  final userInfo;
 
   @override
   State<ContentProviderScenarioScreen> createState() =>
@@ -116,9 +118,11 @@ class _ContentProviderScenarioScreenState
   @override
   Widget build(BuildContext context) {
     return LanguageLearningAppScaffold(
-        title: '${widget.scenario.prompt}',
-        child: _contentProviderScenarioDisplay(),
-        subtitle: '${widget.scenario.language}');
+      title: '${widget.scenario.prompt}',
+      child: _contentProviderScenarioDisplay(),
+      subtitle: '${widget.scenario.language}',
+      userInfo: widget.userInfo,
+    );
   }
 
   Widget _contentProviderScenarioDisplay() {

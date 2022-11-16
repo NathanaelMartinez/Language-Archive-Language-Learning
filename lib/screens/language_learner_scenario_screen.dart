@@ -1,11 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cs467_language_learning_app/widgets/language_learning_app_scaffold.dart';
 import '../models/scenario.dart';
 import '../widgets/text_controller.dart';
 
 class LanguageLearnerScenarioScreen extends StatefulWidget {
-  LanguageLearnerScenarioScreen({super.key, required this.scenario});
+  LanguageLearnerScenarioScreen({super.key, required this.scenario, required this.userInfo});
   Scenario scenario;
+  final userInfo;
 
   @override
   State<LanguageLearnerScenarioScreen> createState() =>
@@ -22,7 +24,9 @@ class _LanguageLearnerScenarioScreenState
     return LanguageLearningAppScaffold(
         title: '${widget.scenario.translatedPrompt}',
         child: _languageLearnerScenarioDisplay(),
-        subtitle: '${widget.scenario.language}');
+        subtitle: '${widget.scenario.language}',
+        userInfo: widget.userInfo,
+        );
   }
 
   Widget _languageLearnerScenarioDisplay() {
@@ -36,11 +40,15 @@ class _LanguageLearnerScenarioScreenState
             Image.network(
               widget.scenario.imageURL,
               scale: 1.0,
-              loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress)  {
+              loadingBuilder: (BuildContext context, Widget child,
+                  ImageChunkEvent? loadingProgress) {
                 if (loadingProgress == null) return child;
                 return Center(
                   child: CircularProgressIndicator(
-                    value: loadingProgress.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes! : null,
+                    value: loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded /
+                            loadingProgress.expectedTotalBytes!
+                        : null,
                     color: Colors.black,
                   ),
                 );

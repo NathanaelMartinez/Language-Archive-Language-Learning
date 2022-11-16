@@ -6,8 +6,10 @@ import 'package:cs467_language_learning_app/widgets/language_learning_app_scaffo
 import 'package:cs467_language_learning_app/models/scenario.dart';
 
 class ContentProviderSelectionScreen extends StatefulWidget {
-  ContentProviderSelectionScreen({super.key, required this.userSelection});
+  ContentProviderSelectionScreen(
+      {super.key, required this.userSelection, required this.userInfo});
   UserSelection userSelection;
+  final userInfo;
 
   @override
   State<ContentProviderSelectionScreen> createState() =>
@@ -60,60 +62,63 @@ class _ContentProviderSelectionScreenState
                                     color: Colors.white))),
                         SizedBox(height: 10),
                         Align(
-                          alignment: Alignment.centerLeft,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                foregroundColor: Colors.black,
-                                backgroundColor: Colors.white),
-                            onPressed: () async {
-                              bool result = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: ((context) =>
-                                      ContentProviderScenarioScreen(
-                                          scenario: scenario)),
-                                ),
-                              );
-                              if (result == true) {
-                                final submitSuccess = const SnackBar(
-                                  content: Text(
-                                    'Submission success! Thanks for your contribution!.',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                  duration: const Duration(milliseconds: 2000),
-                                  backgroundColor: Colors.green,
-                                );
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    submitSuccess); //Show SnackBar
-                              }
-                            },
-                            child: const Text('View'),
-                          ),
-                        )
+                            alignment: Alignment.centerLeft,
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    foregroundColor: Colors.black,
+                                    backgroundColor: Colors.white),
+                                onPressed: () async {
+                                  bool result = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: ((context) =>
+                                          ContentProviderScenarioScreen(
+                                            scenario: scenario,
+                                            userInfo: widget.userInfo,
+                                          )),
+                                    ),
+                                  );
+                                  if (result == true) {
+                                    final submitSuccess = const SnackBar(
+                                      content: Text(
+                                        'Submission success! Thanks for your contribution!.',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                      duration:
+                                          const Duration(milliseconds: 2000),
+                                      backgroundColor: Colors.green,
+                                    );
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        submitSuccess); //Show SnackBar
+                                  }
+                                },
+                                child: const Text('View')))
                       ],
                     ),
                   ),
                 );
               },
             ),
+            userInfo: widget.userInfo,
           );
         } else if (snapshot.hasData && snapshot.data!.docs.isEmpty) {
-          return const LanguageLearningAppScaffold(
+          return LanguageLearningAppScaffold(
             title: 'Contribute',
             subtitle: 'Help Answer a Scenario',
             child: Center(
-              child: Icon(
-                Icons.school,
-                size: 120.0,
-              ),
-            ),
+                child: Icon(
+              Icons.school,
+              size: 120.0,
+            )),
+            userInfo: widget.userInfo,
           );
         } else {
-          return const LanguageLearningAppScaffold(
+          return LanguageLearningAppScaffold(
             title: 'Contribute',
             subtitle: 'Help Answer a Scenario',
             child: Center(child: CircularProgressIndicator()),
+            userInfo: widget.userInfo,
           );
         }
       },

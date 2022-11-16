@@ -52,6 +52,7 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        manifestPlaceholders += [appAuthRedirectScheme: "com.example.cs467_language_learning_app"]
     }
 
     buildTypes {
