@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 class Scenario {
   String imageURL;
   String language;
@@ -7,6 +5,7 @@ class Scenario {
   String answer;
   String translatedAnswer;
   String translatedPrompt;
+  String? docRef;
   bool isComplete;
 
   Scenario(
@@ -16,5 +15,6 @@ class Scenario {
       required this.answer,
       required this.translatedAnswer,
       required this.translatedPrompt,
-      required this.isComplete});
+      required this.isComplete,
+      this.docRef});
 }

@@ -15,6 +15,11 @@ dependencies:
   firebase_core: ^2.1.0
   cloud_firestore: ^4.0.2
   fake_cloud_firestore: ^2.0.1
+  firebase_storage: ^11.0.4
+  flutter_sound: ^9.2.13
+  permission_handler: ^10.2.0
+  path_provider: ^2.0.11
+  assets_audio_player: ^3.0.5
   firebase_auth: ^4.1.2
 
 dev_dependencies:
