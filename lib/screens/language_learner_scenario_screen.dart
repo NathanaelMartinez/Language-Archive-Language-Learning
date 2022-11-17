@@ -1,8 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cs467_language_learning_app/widgets/language_learning_app_scaffold.dart';
 import '../models/scenario.dart';
-import '../widgets/text_controller.dart';
 
 class LanguageLearnerScenarioScreen extends StatefulWidget {
   LanguageLearnerScenarioScreen({super.key, required this.scenario, required this.userInfo});
@@ -17,7 +17,13 @@ class LanguageLearnerScenarioScreen extends StatefulWidget {
 class _LanguageLearnerScenarioScreenState
     extends State<LanguageLearnerScenarioScreen> {
   var userAnswer = '';
-  var userAnswerController = TextControllerState();
+  var userAnswerController = TextEditingController();
+
+  @override
+  void dispose()  {
+    userAnswerController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +82,7 @@ class _LanguageLearnerScenarioScreenState
                       border: OutlineInputBorder(),
                       labelText: 'Answer',
                       hintText: 'Please enter the prompt\'s answer'),
-                  controller: userAnswerController.formControler,
+                  controller: userAnswerController,
                 ),
                 SizedBox(height: 5),
                 ElevatedButton(
@@ -106,7 +112,7 @@ class _LanguageLearnerScenarioScreenState
                         foregroundColor: Colors.white,
                         backgroundColor: Colors.green),
                     onPressed: () {
-                      if (userAnswerController.formControler.text == '') {
+                      if (userAnswerController.text == '') {
                         final missingInput = const SnackBar(
                           content: Text(
                             'Please input answer.',
@@ -119,7 +125,7 @@ class _LanguageLearnerScenarioScreenState
                         ScaffoldMessenger.of(context)
                             .showSnackBar(missingInput);
                       } else {
-                        if (userAnswerController.formControler.text ==
+                        if (userAnswerController.text ==
                             widget.scenario.translatedAnswer) {
                           final correctInput = const SnackBar(
                             content: Text(
@@ -203,6 +209,17 @@ class _LanguageLearnerScenarioScreenState
           ]),
         )),
       ]),
+    );
+  }
+
+  Future<void> _updateUserLLCount() async {
+    var db = FirebaseFirestore.instance;
+    db.collection('users').where('uid', isEqualTo: widget.userInfo.user.uid.toString()).get().then(
+      (res) {
+        var newLLCount = res.docs[0]['llPoints'] + 1;
+        db.collection('users').doc(res.docs[0].id).update({'llPoints' : newLLCount});
+      },
+      onError: (e) => print('Error retrieving user: $e'),
     );
   }
 }
