@@ -50,4 +50,7 @@ flutter:
         - asset: assets/fonts/Lato-LightItalic.ttf
           style: italic
           weight: 300
+  assets:
+    - assets/images/language-archive-logo.png
+
   uses-material-design: true

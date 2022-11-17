@@ -53,14 +53,20 @@ class _HomeLoginScreenState extends State<HomeLoginScreen> {
               child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
+          /*
           const Icon(
             Icons.school,
             size: 130.0,
             color: Colors.black,
           ),
-          // Title pending...
+          */
+          Image.asset(
+            'assets/images/language-archive-logo.png',
+            height: 150,
+          ),
+          const SizedBox(height: 10),
           const Text(
-            'Language Learning App',
+            'Language Archive',
             style: TextStyle(fontSize: 25, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 5),
