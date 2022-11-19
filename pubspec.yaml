@@ -21,6 +21,7 @@ dependencies:
   path_provider: ^2.0.11
   assets_audio_player: ^3.0.5
   firebase_auth: ^4.1.2
+  speech_to_text: ^6.1.0
 
 dev_dependencies:
   flutter_test:

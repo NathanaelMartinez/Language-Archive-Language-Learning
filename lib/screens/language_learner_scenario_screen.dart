@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:speech_to_text/speech_recognition_result.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 import 'package:cs467_language_learning_app/widgets/language_learning_app_scaffold.dart';
 import '../models/scenario.dart';
 
@@ -16,8 +19,42 @@ class LanguageLearnerScenarioScreen extends StatefulWidget {
 
 class _LanguageLearnerScenarioScreenState
     extends State<LanguageLearnerScenarioScreen> {
+  // Development testing ----------
+  bool _isListening = false;
+  var _speechToText = SpeechToText();
+  // ------------------------------
   var userAnswer = '';
   var userAnswerController = TextEditingController();
+
+  void listen() async {
+    if (!_isListening)  {
+      bool available = await _speechToText.initialize(
+        onStatus: (status) => print("$status"),
+        onError: (errorNotification) => print("$errorNotification"),
+      );
+      if (available)  {
+        setState(() {
+          _isListening = true;
+        });
+        _speechToText.listen(
+          onResult: (result) => setState(() {
+            userAnswerController.text = result.recognizedWords;
+          }),
+        );
+      }
+    } else  {
+      setState(() {
+        _isListening = false;
+      });
+      _speechToText.stop();
+    }
+  }
+
+  @override
+  void initState()  {
+    super.initState();
+    _speechToText = SpeechToText();
+  }
 
   @override
   void dispose()  {
@@ -86,12 +123,13 @@ class _LanguageLearnerScenarioScreenState
                 ),
                 SizedBox(height: 5),
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: Colors.black),
-                    // TODO: Input audio recording feature
-                    onPressed: () {},
-                    child: Text('Record Answer')),
+                  style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.black),
+                  onPressed: () {
+                    listen();
+                  },
+                  child: Text(_isListening ? 'Recording...' : 'Record Answer')),
               ],
             ),
             // Button Group
