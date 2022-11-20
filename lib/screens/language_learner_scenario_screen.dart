@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
+import 'package:string_similarity/string_similarity.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:cs467_language_learning_app/widgets/language_learning_app_scaffold.dart';
 import '../models/scenario.dart';
@@ -19,12 +20,45 @@ class LanguageLearnerScenarioScreen extends StatefulWidget {
 
 class _LanguageLearnerScenarioScreenState
     extends State<LanguageLearnerScenarioScreen> {
-  // Development testing ----------
   bool _isListening = false;
   var _speechToText = SpeechToText();
-  // ------------------------------
+  var locales;
   var userAnswer = '';
   var userAnswerController = TextEditingController();
+
+  Future<String> getLocales(List<LocaleName> availableLocales) async {
+    var selectedLocale;
+    int count = 0;
+
+    switch(widget.scenario.language)  {
+      case 'Arabic': {
+        while(availableLocales[count].localeId != 'ar_AE') { count++; }
+        selectedLocale = availableLocales[count].localeId;
+        count = 0;
+        return selectedLocale;
+      } case 'Chinese': {
+        while(availableLocales[count].localeId != 'cmn_CN') { count++; }
+        selectedLocale = availableLocales[count].localeId;
+        count = 0;
+        return selectedLocale;
+      } case 'French': {
+        while(availableLocales[count].localeId != 'fr_FR') { count++; }
+        selectedLocale = availableLocales[count].localeId;
+        count = 0;
+        return selectedLocale;
+      } case 'Spanish': {
+        while(availableLocales[count].localeId != 'es_MX') { count++; }
+        selectedLocale = availableLocales[count].localeId;
+        count = 0;
+        return selectedLocale;
+      } default: {
+        while(availableLocales[count].localeId != 'en_US') { count++; }
+        selectedLocale = availableLocales[count].localeId;
+        count = 0;
+        return selectedLocale;
+      }
+    }
+  }
 
   void listen() async {
     if (!_isListening)  {
@@ -33,6 +67,8 @@ class _LanguageLearnerScenarioScreenState
         onError: (errorNotification) => print("$errorNotification"),
       );
       if (available)  {
+        locales = await _speechToText.locales();
+        var selected = await getLocales(locales);
         setState(() {
           _isListening = true;
         });
@@ -40,6 +76,7 @@ class _LanguageLearnerScenarioScreenState
           onResult: (result) => setState(() {
             userAnswerController.text = result.recognizedWords;
           }),
+          localeId: selected,
         );
       }
     } else  {
@@ -122,14 +159,18 @@ class _LanguageLearnerScenarioScreenState
                   controller: userAnswerController,
                 ),
                 SizedBox(height: 5),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: Colors.black),
-                  onPressed: () {
+                GestureDetector(
+                  onLongPressStart: (details) {
                     listen();
                   },
-                  child: Text(_isListening ? 'Recording...' : 'Record Answer')),
+                  onLongPressUp: () {
+                    setState(() {
+                      _isListening = false;
+                      _speechToText.stop();
+                    });
+                  },
+                  child: speechToTextButtonGroup(_isListening),
+                )
               ],
             ),
             // Button Group
@@ -149,7 +190,7 @@ class _LanguageLearnerScenarioScreenState
                     style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,
                         backgroundColor: Colors.green),
-                    onPressed: () {
+                    onPressed: () async {
                       if (userAnswerController.text == '') {
                         final missingInput = const SnackBar(
                           content: Text(
@@ -163,8 +204,8 @@ class _LanguageLearnerScenarioScreenState
                         ScaffoldMessenger.of(context)
                             .showSnackBar(missingInput);
                       } else {
-                        if (userAnswerController.text ==
-                            widget.scenario.translatedAnswer) {
+                        bool result = await checkUserAnswer(userAnswerController.text);
+                        if (result) {
                           final correctInput = const SnackBar(
                             content: Text(
                               'Correct!',
@@ -174,6 +215,7 @@ class _LanguageLearnerScenarioScreenState
                             duration: const Duration(milliseconds: 2000),
                             backgroundColor: Colors.green,
                           );
+                          await _updateUserLLCount();
                           ScaffoldMessenger.of(context)
                               .showSnackBar(correctInput);
                         } else {
@@ -248,6 +290,34 @@ class _LanguageLearnerScenarioScreenState
         )),
       ]),
     );
+  }
+
+  Future<bool> checkUserAnswer(String userAnswer) async {
+    var comparison = (widget.scenario.translatedAnswer).similarityTo(userAnswer);
+    return comparison >= 1 ? false : true;
+  }
+
+  Widget speechToTextButtonGroup(bool isRecording)  {
+    if (isRecording)  {
+      return ElevatedButton(
+        style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white,
+            backgroundColor: Colors.green),
+        onPressed: () {
+          _isListening = false;
+          _speechToText.stop();
+        },
+        child: Text('Recording...'));
+    } else  {
+      return ElevatedButton(
+        style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white,
+            backgroundColor: Colors.black),
+        onPressed: () {
+          listen();
+        },
+        child: Text('Hold to record answer'));
+    }
   }
 
   Future<void> _updateUserLLCount() async {
