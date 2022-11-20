@@ -294,7 +294,7 @@ class _LanguageLearnerScenarioScreenState
 
   Future<bool> checkUserAnswer(String userAnswer) async {
     var comparison = (widget.scenario.translatedAnswer).similarityTo(userAnswer);
-    return comparison >= 1 ? false : true;
+    return comparison >= 0.75 ? true : false;
   }
 
   Widget speechToTextButtonGroup(bool isRecording)  {
@@ -313,9 +313,7 @@ class _LanguageLearnerScenarioScreenState
         style: ElevatedButton.styleFrom(
             foregroundColor: Colors.white,
             backgroundColor: Colors.black),
-        onPressed: () {
-          listen();
-        },
+        onPressed: () {},
         child: Text('Hold to record answer'));
     }
   }
