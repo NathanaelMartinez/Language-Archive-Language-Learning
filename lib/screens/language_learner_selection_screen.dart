@@ -1,5 +1,4 @@
 import 'package:cs467_language_learning_app/models/userSelection.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -8,7 +7,8 @@ import 'package:cs467_language_learning_app/widgets/language_learning_app_scaffo
 import 'package:cs467_language_learning_app/models/scenario.dart';
 
 class LanguageLearnerSelectionScreen extends StatefulWidget {
-  LanguageLearnerSelectionScreen({super.key, required this.userSelection, required this.userInfo});
+  LanguageLearnerSelectionScreen(
+      {super.key, required this.userSelection, required this.userInfo});
   UserSelection userSelection;
   final userInfo;
 
@@ -43,6 +43,8 @@ class _LanguageLearnerSelectionScreenState
                     answer: entry['answer'],
                     translatedAnswer: entry['translatedAnswer'],
                     translatedPrompt: entry['translatedPrompt'],
+                    answerAudioUrl: entry['answerAudioUrl'],
+                    promptAudioUrl: entry['promptAudioUrl'],
                     isComplete: entry['isComplete']);
                 return ListTile(
                   title: Container(
@@ -72,7 +74,8 @@ class _LanguageLearnerSelectionScreenState
                                   MaterialPageRoute(
                                       builder: ((context) =>
                                           LanguageLearnerScenarioScreen(
-                                              scenario: scenario, userInfo: widget.userInfo))),
+                                              scenario: scenario,
+                                              userInfo: widget.userInfo))),
                                 );
                               },
                               child: const Text('View')))

@@ -1,15 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:speech_to_text/speech_recognition_result.dart';
+import 'package:flutter_sound/flutter_sound.dart';
 import 'package:string_similarity/string_similarity.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:cs467_language_learning_app/widgets/language_learning_app_scaffold.dart';
 import '../models/scenario.dart';
 
 class LanguageLearnerScenarioScreen extends StatefulWidget {
-  LanguageLearnerScenarioScreen({super.key, required this.scenario, required this.userInfo});
+  LanguageLearnerScenarioScreen(
+      {super.key, required this.scenario, required this.userInfo});
   Scenario scenario;
   final userInfo;
 
@@ -21,6 +20,8 @@ class LanguageLearnerScenarioScreen extends StatefulWidget {
 class _LanguageLearnerScenarioScreenState
     extends State<LanguageLearnerScenarioScreen> {
   bool _isListening = false;
+  bool _isPlaying = false;
+  final player = FlutterSoundPlayer();
   var _speechToText = SpeechToText();
   var locales;
   var userAnswer = '';
@@ -30,43 +31,81 @@ class _LanguageLearnerScenarioScreenState
     var selectedLocale;
     int count = 0;
 
-    switch(widget.scenario.language)  {
-      case 'Arabic': {
-        while(availableLocales[count].localeId != 'ar_AE') { count++; }
-        selectedLocale = availableLocales[count].localeId;
-        count = 0;
-        return selectedLocale;
-      } case 'Chinese': {
-        while(availableLocales[count].localeId != 'cmn_CN') { count++; }
-        selectedLocale = availableLocales[count].localeId;
-        count = 0;
-        return selectedLocale;
-      } case 'French': {
-        while(availableLocales[count].localeId != 'fr_FR') { count++; }
-        selectedLocale = availableLocales[count].localeId;
-        count = 0;
-        return selectedLocale;
-      } case 'Spanish': {
-        while(availableLocales[count].localeId != 'es_MX') { count++; }
-        selectedLocale = availableLocales[count].localeId;
-        count = 0;
-        return selectedLocale;
-      } default: {
-        while(availableLocales[count].localeId != 'en_US') { count++; }
-        selectedLocale = availableLocales[count].localeId;
-        count = 0;
-        return selectedLocale;
-      }
+    switch (widget.scenario.language) {
+      case 'Arabic':
+        {
+          while (availableLocales[count].localeId != 'ar_AE') {
+            count++;
+          }
+          selectedLocale = availableLocales[count].localeId;
+          count = 0;
+          return selectedLocale;
+        }
+      case 'Chinese':
+        {
+          while (availableLocales[count].localeId != 'cmn_CN') {
+            count++;
+          }
+          selectedLocale = availableLocales[count].localeId;
+          count = 0;
+          return selectedLocale;
+        }
+      case 'French':
+        {
+          while (availableLocales[count].localeId != 'fr_FR') {
+            count++;
+          }
+          selectedLocale = availableLocales[count].localeId;
+          count = 0;
+          return selectedLocale;
+        }
+      case 'Spanish':
+        {
+          while (availableLocales[count].localeId != 'es_MX') {
+            count++;
+          }
+          selectedLocale = availableLocales[count].localeId;
+          count = 0;
+          return selectedLocale;
+        }
+      default:
+        {
+          while (availableLocales[count].localeId != 'en_US') {
+            count++;
+          }
+          selectedLocale = availableLocales[count].localeId;
+          count = 0;
+          return selectedLocale;
+        }
     }
   }
 
+  void _startPlayback(String audioURL) async {
+    if (!_isPlaying) {
+      _isPlaying = true;
+      await player.openPlayer();
+      await player.startPlayer(
+        fromURI: audioURL,
+        codec: Codec.aacMP4,
+        whenFinished: () => setState(() {
+          _isPlaying = false;
+        }),
+      );
+    } else {
+      await player.stopPlayer();
+      await player.closePlayer();
+      _isPlaying = false;
+    }
+    setState(() {});
+  }
+
   void listen() async {
-    if (!_isListening)  {
+    if (!_isListening) {
       bool available = await _speechToText.initialize(
         onStatus: (status) => print("$status"),
         onError: (errorNotification) => print("$errorNotification"),
       );
-      if (available)  {
+      if (available) {
         locales = await _speechToText.locales();
         var selected = await getLocales(locales);
         setState(() {
@@ -79,7 +118,7 @@ class _LanguageLearnerScenarioScreenState
           localeId: selected,
         );
       }
-    } else  {
+    } else {
       setState(() {
         _isListening = false;
       });
@@ -88,13 +127,13 @@ class _LanguageLearnerScenarioScreenState
   }
 
   @override
-  void initState()  {
+  void initState() {
     super.initState();
     _speechToText = SpeechToText();
   }
 
   @override
-  void dispose()  {
+  void dispose() {
     userAnswerController.dispose();
     super.dispose();
   }
@@ -102,11 +141,11 @@ class _LanguageLearnerScenarioScreenState
   @override
   Widget build(BuildContext context) {
     return LanguageLearningAppScaffold(
-        title: '${widget.scenario.translatedPrompt}',
-        child: _languageLearnerScenarioDisplay(),
-        subtitle: '${widget.scenario.language}',
-        userInfo: widget.userInfo,
-        );
+      title: '${widget.scenario.translatedPrompt}',
+      child: _languageLearnerScenarioDisplay(),
+      subtitle: '${widget.scenario.language}',
+      userInfo: widget.userInfo,
+    );
   }
 
   Widget _languageLearnerScenarioDisplay() {
@@ -204,7 +243,8 @@ class _LanguageLearnerScenarioScreenState
                         ScaffoldMessenger.of(context)
                             .showSnackBar(missingInput);
                       } else {
-                        bool result = await checkUserAnswer(userAnswerController.text);
+                        bool result =
+                            await checkUserAnswer(userAnswerController.text);
                         if (result) {
                           final correctInput = const SnackBar(
                             content: Text(
@@ -257,6 +297,17 @@ class _LanguageLearnerScenarioScreenState
                                                 fontWeight: FontWeight.w700)),
                                         Text(
                                             '${widget.scenario.translatedPrompt}'),
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            foregroundColor: Colors.white,
+                                            backgroundColor: Colors.green,
+                                          ),
+                                          child: Text('Play Prompt'),
+                                          onPressed: () {
+                                            _startPlayback(
+                                                widget.scenario.promptAudioUrl);
+                                          },
+                                        ),
                                         SizedBox(height: 10),
                                         const Text('Translated Prompt:',
                                             style: TextStyle(
@@ -268,6 +319,17 @@ class _LanguageLearnerScenarioScreenState
                                                 fontWeight: FontWeight.w700)),
                                         Text(
                                             '${widget.scenario.translatedAnswer}'),
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            foregroundColor: Colors.white,
+                                            backgroundColor: Colors.green,
+                                          ),
+                                          child: Text('Play Answer'),
+                                          onPressed: () {
+                                            _startPlayback(
+                                                widget.scenario.answerAudioUrl);
+                                          },
+                                        ),
                                         SizedBox(height: 10),
                                         const Text('Translated Answer:',
                                             style: TextStyle(
@@ -293,37 +355,43 @@ class _LanguageLearnerScenarioScreenState
   }
 
   Future<bool> checkUserAnswer(String userAnswer) async {
-    var comparison = (widget.scenario.translatedAnswer).similarityTo(userAnswer);
+    var comparison =
+        (widget.scenario.translatedAnswer).similarityTo(userAnswer);
     return comparison >= 0.75 ? true : false;
   }
 
-  Widget speechToTextButtonGroup(bool isRecording)  {
-    if (isRecording)  {
+  Widget speechToTextButtonGroup(bool isRecording) {
+    if (isRecording) {
       return ElevatedButton(
-        style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white,
-            backgroundColor: Colors.green),
-        onPressed: () {
-          _isListening = false;
-          _speechToText.stop();
-        },
-        child: Text('Recording...'));
-    } else  {
+          style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.white, backgroundColor: Colors.green),
+          onPressed: () {
+            _isListening = false;
+            _speechToText.stop();
+          },
+          child: Text('Recording...'));
+    } else {
       return ElevatedButton(
-        style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white,
-            backgroundColor: Colors.black),
-        onPressed: () {},
-        child: Text('Hold to record answer'));
+          style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.white, backgroundColor: Colors.black),
+          onPressed: () {},
+          child: Text('Hold to Record Answer'));
     }
   }
 
   Future<void> _updateUserLLCount() async {
     var db = FirebaseFirestore.instance;
-    db.collection('users').where('uid', isEqualTo: widget.userInfo.user.uid.toString()).get().then(
+    db
+        .collection('users')
+        .where('uid', isEqualTo: widget.userInfo.user.uid.toString())
+        .get()
+        .then(
       (res) {
         var newLLCount = res.docs[0]['llPoints'] + 1;
-        db.collection('users').doc(res.docs[0].id).update({'llPoints' : newLLCount});
+        db
+            .collection('users')
+            .doc(res.docs[0].id)
+            .update({'llPoints': newLLCount});
       },
       onError: (e) => print('Error retrieving user: $e'),
     );
