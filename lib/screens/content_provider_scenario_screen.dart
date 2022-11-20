@@ -4,14 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_sound/flutter_sound.dart';
-import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:assets_audio_player/assets_audio_player.dart';
 
 import 'package:cs467_language_learning_app/models/scenario.dart';
 import 'package:cs467_language_learning_app/widgets/language_learning_app_scaffold.dart';
-import 'package:cs467_language_learning_app/widgets/text_controller.dart';
 
 class ContentProviderScenarioScreen extends StatefulWidget {
   ContentProviderScenarioScreen(
@@ -28,8 +25,8 @@ class _ContentProviderScenarioScreenState
     extends State<ContentProviderScenarioScreen> {
   var textPromptTranslation = '';
   var textAnswerTranslation = '';
-  var textPromptController = TextControllerState();
-  var textAnswerController = TextControllerState();
+  var textPromptController = TextEditingController();
+  var textAnswerController = TextEditingController();
   final formKey = GlobalKey<FormState>();
   final recorder = FlutterSoundRecorder();
   final player = FlutterSoundPlayer();
@@ -58,7 +55,8 @@ class _ContentProviderScenarioScreenState
 
   @override
   void dispose() {
-    recorder.closeRecorder();
+    textPromptController.dispose();
+    textAnswerController.dispose();
     super.dispose();
   }
 
@@ -85,7 +83,7 @@ class _ContentProviderScenarioScreenState
       recordedUrl = value;
       setState(() {
         debugPrint('PATH : -------- $recordedUrl');
-        if (audioType == 'prompt') {
+        if (audioType == 'Prompt') {
           _isPromptRecorded = true;
           promptAudioUrl = recordedUrl;
         } else {
@@ -176,21 +174,21 @@ class _ContentProviderScenarioScreenState
                             labelText: 'Prompt Translation',
                             hintText:
                                 'Please enter the ${widget.scenario.language} translation'),
-                        controller: textPromptController.formControler,
+                        controller: textPromptController,
                       ),
                       SizedBox(height: 5),
                       GestureDetector(
                         onLongPressStart: (details) {
                           _startRecord(
-                            audioType: 'prompt',
+                            audioType: 'Prompt',
                           ); // start recording when long pressed
                         },
                         onLongPressUp: () {
                           _stopRecord(
-                            audioType: 'prompt',
+                            audioType: 'Prompt',
                           ); // stop recording when released
                         },
-                        child: recordOrRecorded(audioType: 'prompt'),
+                        child: recordOrRecorded(audioType: 'Prompt'),
                       )
                     ],
                   ),
@@ -218,21 +216,21 @@ class _ContentProviderScenarioScreenState
                             labelText: 'Answer Translation',
                             hintText:
                                 'Please enter the ${widget.scenario.language} translation'),
-                        controller: textAnswerController.formControler,
+                        controller: textAnswerController,
                       ),
                       SizedBox(height: 5),
                       GestureDetector(
                         onLongPressStart: (details) {
                           _startRecord(
-                            audioType: 'answer',
+                            audioType: 'Answer',
                           ); // start recording when long pressed
                         },
                         onLongPressUp: () {
                           _stopRecord(
-                            audioType: 'answer',
+                            audioType: 'Answer',
                           ); // stop recording when released
                         },
-                        child: recordOrRecorded(audioType: 'answer'),
+                        child: recordOrRecorded(audioType: 'Answer'),
                       )
                     ],
                   ),
@@ -255,8 +253,8 @@ class _ContentProviderScenarioScreenState
                             backgroundColor: Colors.green),
                         onPressed: () async {
                           debugPrint('$scenarioDTO');
-                          if (textAnswerController.formControler.text == '' ||
-                              textPromptController.formControler.text == '' ||
+                          if (textAnswerController.text == '' ||
+                              textPromptController.text == '' ||
                               answerAudioUrl == null ||
                               promptAudioUrl == null ||
                               answerAudioUrl == '' ||
@@ -274,15 +272,16 @@ class _ContentProviderScenarioScreenState
                                 .showSnackBar(incorrectInput);
                           } else {
                             scenarioDTO.translatedAnswer =
-                                textAnswerController.formControler.text;
+                                textAnswerController.text;
                             scenarioDTO.translatedPrompt =
-                                textPromptController.formControler.text;
+                                textPromptController.text;
                             await _uploadAudioFiles();
                             scenarioDTO.isComplete = true;
                             FirebaseFirestore.instance
                                 .collection('scenarios')
                                 .doc(widget.scenario.docRef)
                                 .update(scenarioDTO.toMap());
+                            await _updateUserCPCount();
                             Navigator.of(context).pop(true);
                           }
                         },
@@ -310,6 +309,24 @@ class _ContentProviderScenarioScreenState
     );
   }
 
+  Future<void> _updateUserCPCount() async {
+    var db = FirebaseFirestore.instance;
+    db
+        .collection('users')
+        .where('uid', isEqualTo: widget.userInfo.user.uid.toString())
+        .get()
+        .then(
+      (res) {
+        var newCPCount = res.docs[0]['cpPoints'] + 1;
+        db
+            .collection('users')
+            .doc(res.docs[0].id)
+            .update({'cpPoints': newCPCount});
+      },
+      onError: (e) => print('Error retrieving user: $e'),
+    );
+  }
+
   Future<void> _uploadAudioFiles() async {
     setState(() {
       _isUploading = true;
@@ -333,8 +350,6 @@ class _ContentProviderScenarioScreenState
       await uploadTask;
       scenarioDTO.answerAudioUrl = await storageReference.getDownloadURL();
       debugPrint('ANSWER URL -------------- ${scenarioDTO.answerAudioUrl}');
-
-      // widget.onUploadComplete();
     } catch (error) {
       print('Error occured while uplaoding to Firebase ${error.toString()}');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -354,7 +369,7 @@ class _ContentProviderScenarioScreenState
   }
 
   recordOrRecorded({required String audioType}) {
-    if (audioType == 'prompt' && _isPromptRecorded) {
+    if (audioType == 'Prompt' && _isPromptRecorded) {
       return Row(
         children: [
           ElevatedButton(
@@ -386,7 +401,7 @@ class _ContentProviderScenarioScreenState
         ],
         mainAxisAlignment: MainAxisAlignment.center,
       );
-    } else if (audioType == 'answer' && _isAnswerRecorded) {
+    } else if (audioType == 'Answer' && _isAnswerRecorded) {
       return Row(
         children: [
           ElevatedButton(
@@ -423,7 +438,7 @@ class _ContentProviderScenarioScreenState
         style: ElevatedButton.styleFrom(
             foregroundColor: Colors.white, backgroundColor: Colors.black),
         onPressed: () {},
-        child: Text('Hold to record $audioType'),
+        child: Text('Hold to Record $audioType'),
       );
     }
   }

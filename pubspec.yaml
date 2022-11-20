@@ -21,6 +21,8 @@ dependencies:
   path_provider: ^2.0.11
   assets_audio_player: ^3.0.5
   firebase_auth: ^4.1.2
+  speech_to_text: ^6.1.0
+  string_similarity: ^2.0.0
 
 dev_dependencies:
   flutter_test:
@@ -50,4 +52,7 @@ flutter:
         - asset: assets/fonts/Lato-LightItalic.ttf
           style: italic
           weight: 300
+  assets:
+    - assets/images/language-archive-logo.png
+
   uses-material-design: true

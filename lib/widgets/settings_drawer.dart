@@ -8,16 +8,24 @@ class SettingsDrawer extends StatelessWidget {
 
   Widget GetUserInfo(BuildContext context, value) {
     return new StreamBuilder(
-      stream: FirebaseFirestore.instance.collection('users').where('uid', isEqualTo: userInfo.user.uid.toString()).snapshots(),
+      stream: FirebaseFirestore.instance
+          .collection('users')
+          .where('uid', isEqualTo: userInfo.user.uid.toString())
+          .snapshots(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData)  {
+        if (!snapshot.hasData) {
           return new Text('Loading...');
-        } else  {
+        } else {
           var userData = snapshot.data!.docs[0];
-          if (value == 0) {return new Text(userData['name']);}
-          else if (value == 1)  {return new Text(userData['email']);}
-          else if (value == 2)  {return new Text('${userData['cpPoints']}');}
-          else {return new Text('${userData['llPoints']}');}
+          if (value == 0) {
+            return new Text(userData['name']);
+          } else if (value == 1) {
+            return new Text(userData['email']);
+          } else if (value == 2) {
+            return new Text('${userData['cpPoints']}');
+          } else {
+            return new Text('${userData['llPoints']}');
+          }
         }
       },
     );
@@ -35,51 +43,39 @@ class SettingsDrawer extends StatelessWidget {
             SizedBox(height: 10),
             // User Information
             ListTile(
-              title: Column(
-                children: [
-                  Text(
-                    'User',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-                  ),
-                  GetUserInfo(context, 0)
-                ]
-              )
-            ),
+                title: Column(children: [
+              Text(
+                'User',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+              ),
+              GetUserInfo(context, 0)
+            ])),
             ListTile(
-              title: Column(
-                children: [
-                  Text(
-                    'Email',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-                  ),
-                  GetUserInfo(context, 1)
-                ]
-              )
-            ),
+                title: Column(children: [
+              Text(
+                'Email',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+              ),
+              GetUserInfo(context, 1)
+            ])),
             ListTile(
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Content Provided: ',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
-                  ),
-                  GetUserInfo(context, 2)
-                ]
-              )
-            ),
+                title:
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Text(
+                'Content Provided: ',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+              ),
+              GetUserInfo(context, 2)
+            ])),
             ListTile(
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Scenarios Practiced: ',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
-                  ),
-                  GetUserInfo(context, 3)
-                ]
-              )
-            ),
+                title:
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Text(
+                'Scenarios Practiced: ',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+              ),
+              GetUserInfo(context, 3)
+            ])),
             // Logout button
             ListTile(
               title: TextButton(

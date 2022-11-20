@@ -42,6 +42,8 @@ class _ContentProviderSelectionScreenState
                     answer: entry['answer'],
                     translatedAnswer: entry['translatedAnswer'],
                     translatedPrompt: entry['translatedPrompt'],
+                    answerAudioUrl: entry['answerAudioUrl'],
+                    promptAudioUrl: entry['promptAudioUrl'],
                     isComplete: entry['isComplete'],
                     docRef: entry.id);
                 return ListTile(
