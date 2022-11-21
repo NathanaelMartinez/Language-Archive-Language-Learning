@@ -392,11 +392,12 @@ class _ContentProviderScenarioScreenState
               foregroundColor: Colors.white,
               backgroundColor: Colors.green,
             ),
-            child: Text('Play Recording'),
+            child: stopOrPlay(),
             onPressed: () {
               _startPlayback(
                 promptAudioUrl,
               );
+              setState(() {});
             },
           ),
           SizedBox(
@@ -426,11 +427,12 @@ class _ContentProviderScenarioScreenState
               foregroundColor: Colors.white,
               backgroundColor: Colors.green,
             ),
-            child: Text('Play Recording'),
+            child: stopOrPlay(),
             onPressed: () {
               _startPlayback(
                 answerAudioUrl,
               );
+              setState(() {});
             },
           ),
           SizedBox(
@@ -459,6 +461,14 @@ class _ContentProviderScenarioScreenState
         onPressed: () {},
         child: Text('Hold to Record $audioType'),
       );
+    }
+  }
+
+  Widget stopOrPlay() {
+    if (_isPlaying) {
+      return Text('Stop Recording');
+    } else {
+      return Text('Play Recording');
     }
   }
 }
