@@ -66,7 +66,6 @@ class _ContentProviderScenarioScreenState
     if (status != PermissionStatus.granted)
       throw RecordingPermissionException("Microphone permission not granted");
     await recorder.openRecorder();
-    _isRecording = false;
     Directory directory = await getApplicationDocumentsDirectory();
     String filepath = directory.path +
         '/' +
@@ -76,6 +75,9 @@ class _ContentProviderScenarioScreenState
       toFile: filepath,
       codec: Codec.aacMP4,
     );
+    setState(() {
+      _isRecording = true;
+    });
   }
 
   _stopRecord({required String audioType}) async {
@@ -91,6 +93,7 @@ class _ContentProviderScenarioScreenState
           answerAudioUrl = recordedUrl;
         }
         recorder.closeRecorder();
+        _isRecording = false;
       });
     });
   }
@@ -109,6 +112,7 @@ class _ContentProviderScenarioScreenState
     } else {
       await player.stopPlayer();
       await player.closePlayer();
+      _isPlaying = false;
     }
     setState(() {});
   }
@@ -226,9 +230,13 @@ class _ContentProviderScenarioScreenState
                           ); // start recording when long pressed
                         },
                         onLongPressUp: () {
-                          _stopRecord(
-                            audioType: 'Answer',
-                          ); // stop recording when released
+                          setState(
+                            () {
+                              _stopRecord(
+                                audioType: 'Answer',
+                              ); // stop recording when released
+                            },
+                          );
                         },
                         child: recordOrRecorded(audioType: 'Answer'),
                       )
@@ -368,8 +376,15 @@ class _ContentProviderScenarioScreenState
     }
   }
 
-  recordOrRecorded({required String audioType}) {
-    if (audioType == 'Prompt' && _isPromptRecorded) {
+  Widget recordOrRecorded({required String audioType}) {
+    if (_isRecording) {
+      return ElevatedButton(
+        style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white, backgroundColor: Colors.green),
+        onPressed: () {},
+        child: Text('Recording...'),
+      );
+    } else if (audioType == 'Prompt' && _isPromptRecorded) {
       return Row(
         children: [
           ElevatedButton(
@@ -377,9 +392,11 @@ class _ContentProviderScenarioScreenState
               foregroundColor: Colors.white,
               backgroundColor: Colors.green,
             ),
-            child: Icon(Icons.play_arrow),
+            child: Text('Play Recording'),
             onPressed: () {
-              _startPlayback(promptAudioUrl);
+              _startPlayback(
+                promptAudioUrl,
+              );
             },
           ),
           SizedBox(
@@ -409,9 +426,11 @@ class _ContentProviderScenarioScreenState
               foregroundColor: Colors.white,
               backgroundColor: Colors.green,
             ),
-            child: Icon(Icons.play_arrow),
+            child: Text('Play Recording'),
             onPressed: () {
-              _startPlayback(answerAudioUrl);
+              _startPlayback(
+                answerAudioUrl,
+              );
             },
           ),
           SizedBox(

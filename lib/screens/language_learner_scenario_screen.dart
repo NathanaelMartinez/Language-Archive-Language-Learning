@@ -150,207 +150,231 @@ class _LanguageLearnerScenarioScreenState
 
   Widget _languageLearnerScenarioDisplay() {
     return Center(
-      child: ListView(children: [
-        ListTile(
+      child: ListView(
+        children: [
+          ListTile(
             title: Container(
-          padding: const EdgeInsets.all(25),
-          child: Column(children: [
-            // Image Group
-            Image.network(
-              widget.scenario.imageURL,
-              scale: 1.0,
-              loadingBuilder: (BuildContext context, Widget child,
-                  ImageChunkEvent? loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Center(
-                  child: CircularProgressIndicator(
-                    value: loadingProgress.expectedTotalBytes != null
-                        ? loadingProgress.cumulativeBytesLoaded /
-                            loadingProgress.expectedTotalBytes!
-                        : null,
+              padding: const EdgeInsets.all(25),
+              child: Column(
+                children: [
+                  // Image Group
+                  Image.network(
+                    widget.scenario.imageURL,
+                    scale: 1.0,
+                    loadingBuilder: (BuildContext context, Widget child,
+                        ImageChunkEvent? loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Center(
+                        child: CircularProgressIndicator(
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                                  loadingProgress.expectedTotalBytes!
+                              : null,
+                          color: Colors.black,
+                        ),
+                      );
+                    },
+                  ),
+                  SizedBox(height: 30),
+                  // Prompt Group
+                  Column(
+                    children: [
+                      Text(
+                        'Prompt',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        '${widget.scenario.translatedPrompt}',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w500),
+                      ),
+                      SizedBox(height: 10),
+                      TextField(
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Answer',
+                            hintText: 'Please enter the prompt\'s answer'),
+                        controller: userAnswerController,
+                      ),
+                      SizedBox(height: 5),
+                      GestureDetector(
+                        onLongPressStart: (details) {
+                          listen();
+                        },
+                        onLongPressUp: () {
+                          setState(() {
+                            _isListening = false;
+                            _speechToText.stop();
+                          });
+                        },
+                        child: speechToTextButtonGroup(_isListening),
+                      )
+                    ],
+                  ),
+                  // Button Group
+                  SizedBox(height: 30),
+                  Divider(
                     color: Colors.black,
+                    height: 5,
+                    thickness: 1,
+                    indent: 15,
+                    endIndent: 15,
                   ),
-                );
-              },
-            ),
-            SizedBox(height: 30),
-            // Prompt Group
-            Column(
-              children: [
-                Text(
-                  'Prompt',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                SizedBox(height: 5),
-                Text(
-                  '${widget.scenario.translatedPrompt}',
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
-                ),
-                SizedBox(height: 10),
-                TextField(
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Answer',
-                      hintText: 'Please enter the prompt\'s answer'),
-                  controller: userAnswerController,
-                ),
-                SizedBox(height: 5),
-                GestureDetector(
-                  onLongPressStart: (details) {
-                    listen();
-                  },
-                  onLongPressUp: () {
-                    setState(() {
-                      _isListening = false;
-                      _speechToText.stop();
-                    });
-                  },
-                  child: speechToTextButtonGroup(_isListening),
-                )
-              ],
-            ),
-            // Button Group
-            SizedBox(height: 30),
-            Divider(
-              color: Colors.black,
-              height: 5,
-              thickness: 1,
-              indent: 15,
-              endIndent: 15,
-            ),
-            SizedBox(height: 30),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: Colors.green),
-                    onPressed: () async {
-                      if (userAnswerController.text == '') {
-                        final missingInput = const SnackBar(
-                          content: Text(
-                            'Please input answer.',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          duration: const Duration(milliseconds: 2000),
-                          backgroundColor: Colors.red,
-                        );
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(missingInput);
-                      } else {
-                        bool result =
-                            await checkUserAnswer(userAnswerController.text);
-                        if (result) {
-                          final correctInput = const SnackBar(
-                            content: Text(
-                              'Correct!',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            duration: const Duration(milliseconds: 2000),
-                            backgroundColor: Colors.green,
-                          );
-                          await _updateUserLLCount();
-                          ScaffoldMessenger.of(context)
-                              .showSnackBar(correctInput);
-                        } else {
-                          final incorrectInput = const SnackBar(
-                            content: Text(
-                              'Inocrrect - please try again.',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            duration: const Duration(milliseconds: 2000),
-                            backgroundColor: Colors.red,
-                          );
-                          ScaffoldMessenger.of(context)
-                              .showSnackBar(incorrectInput);
-                        }
-                      }
-                    },
-                    child: Text('Submit')),
-                SizedBox(width: 10),
-                ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        side: BorderSide(color: Colors.blue),
-                        foregroundColor: Colors.blue,
-                        backgroundColor: Colors.white),
-                    onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) => AlertDialog(
-                                title: const Text('Scenario Answer',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w700)),
-                                content: SingleChildScrollView(
-                                  child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        const Text('Prompt:',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w700)),
-                                        Text(
-                                            '${widget.scenario.translatedPrompt}'),
-                                        ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            foregroundColor: Colors.white,
-                                            backgroundColor: Colors.green,
-                                          ),
-                                          child: Text('Play Prompt'),
-                                          onPressed: () {
-                                            _startPlayback(
-                                                widget.scenario.promptAudioUrl);
-                                          },
-                                        ),
-                                        SizedBox(height: 10),
-                                        const Text('Translated Prompt:',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w700)),
-                                        Text('${widget.scenario.prompt}'),
-                                        SizedBox(height: 20),
-                                        const Text('Answer:',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w700)),
-                                        Text(
-                                            '${widget.scenario.translatedAnswer}'),
-                                        ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            foregroundColor: Colors.white,
-                                            backgroundColor: Colors.green,
-                                          ),
-                                          child: Text('Play Answer'),
-                                          onPressed: () {
-                                            _startPlayback(
-                                                widget.scenario.answerAudioUrl);
-                                          },
-                                        ),
-                                        SizedBox(height: 10),
-                                        const Text('Translated Answer:',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w700)),
-                                        Text('${widget.scenario.answer}'),
-                                      ]),
+                  SizedBox(height: 30),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor: Colors.green),
+                        onPressed: () async {
+                          if (userAnswerController.text == '') {
+                            final missingInput = const SnackBar(
+                              content: Text(
+                                'Please input answer.',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              duration: const Duration(milliseconds: 2000),
+                              backgroundColor: Colors.red,
+                            );
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(missingInput);
+                          } else {
+                            bool result = await checkUserAnswer(
+                                userAnswerController.text);
+                            if (result) {
+                              final correctInput = const SnackBar(
+                                content: Text(
+                                  'Correct!',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: Colors.white),
                                 ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: const Text('Go Back'),
-                                  ),
-                                ],
-                              ));
-                    },
-                    child: const Text('Show Answer'))
-              ],
-            )
-          ]),
-        )),
-      ]),
+                                duration: const Duration(milliseconds: 2000),
+                                backgroundColor: Colors.green,
+                              );
+                              await _updateUserLLCount();
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(correctInput);
+                            } else {
+                              final incorrectInput = const SnackBar(
+                                content: Text(
+                                  'Inocrrect - please try again.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                duration: const Duration(milliseconds: 2000),
+                                backgroundColor: Colors.red,
+                              );
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(incorrectInput);
+                            }
+                          }
+                        },
+                        child: Text('Submit'),
+                      ),
+                      SizedBox(width: 10),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          side: BorderSide(color: Colors.blue),
+                          foregroundColor: Colors.blue,
+                          backgroundColor: Colors.white,
+                        ),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                              title: const Text(
+                                'Scenario Answer',
+                                style: TextStyle(fontWeight: FontWeight.w700),
+                              ),
+                              content: SingleChildScrollView(
+                                child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Text(
+                                        'Prompt:',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                      Text(
+                                        '${widget.scenario.translatedPrompt}',
+                                      ),
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          foregroundColor: Colors.white,
+                                          backgroundColor: Colors.green,
+                                        ),
+                                        child: Text('Play Prompt'),
+                                        onPressed: () {
+                                          _startPlayback(
+                                              widget.scenario.promptAudioUrl);
+                                        },
+                                      ),
+                                      SizedBox(height: 10),
+                                      const Text(
+                                        'Translated Prompt:',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                      Text('${widget.scenario.prompt}'),
+                                      SizedBox(height: 20),
+                                      const Text(
+                                        'Answer:',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w700),
+                                      ),
+                                      Text(
+                                        '${widget.scenario.translatedAnswer}',
+                                      ),
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          foregroundColor: Colors.white,
+                                          backgroundColor: Colors.green,
+                                        ),
+                                        child: Text('Play Answer'),
+                                        onPressed: () {
+                                          _startPlayback(
+                                            widget.scenario.answerAudioUrl,
+                                          );
+                                        },
+                                      ),
+                                      SizedBox(height: 10),
+                                      const Text(
+                                        'Translated Answer:',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                      Text('${widget.scenario.answer}'),
+                                    ]),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text('Go Back'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        child: const Text('Show Answer'),
+                      )
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
