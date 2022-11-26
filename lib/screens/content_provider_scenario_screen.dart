@@ -285,6 +285,8 @@ class _ContentProviderScenarioScreenState
                                 textPromptController.text;
                             await _uploadAudioFiles();
                             scenarioDTO.isComplete = true;
+                            String userTranslator = await _getUserName();
+                            scenarioDTO.translator = userTranslator;
                             FirebaseFirestore.instance
                                 .collection('scenarios')
                                 .doc(widget.scenario.docRef)
@@ -315,6 +317,12 @@ class _ContentProviderScenarioScreenState
         ],
       ),
     );
+  }
+
+  Future<String> _getUserName() async {
+    var db = FirebaseFirestore.instance;
+    var doc = await db.collection('users').where('uid', isEqualTo: widget.userInfo.user.uid.toString()).get();
+    return doc.docs[0]['name'];
   }
 
   Future<void> _updateUserCPCount() async {

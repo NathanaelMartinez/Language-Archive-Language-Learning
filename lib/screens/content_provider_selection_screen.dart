@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/userSelection.dart';
@@ -44,6 +46,7 @@ class _ContentProviderSelectionScreenState
                     translatedPrompt: entry['translatedPrompt'],
                     answerAudioUrl: entry['answerAudioUrl'],
                     promptAudioUrl: entry['promptAudioUrl'],
+                    translator: entry['translator'],
                     isComplete: entry['isComplete'],
                     docRef: entry.id);
                 return ListTile(
@@ -109,9 +112,16 @@ class _ContentProviderSelectionScreenState
             title: 'Contribute',
             subtitle: 'Help Answer a Scenario',
             child: Center(
-                child: Icon(
-              Icons.school,
-              size: 120.0,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/images/language-archive-logo.png',
+                      height: 120),
+                    SizedBox(height: 10),
+                    Text('All ${widget.userSelection.language} scenarios have been translated!',
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300))
+                  ]
             )),
             userInfo: widget.userInfo,
           );

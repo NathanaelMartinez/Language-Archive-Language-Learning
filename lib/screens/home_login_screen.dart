@@ -52,13 +52,6 @@ class _HomeLoginScreenState extends State<HomeLoginScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    /*
-          const Icon(
-            Icons.school,
-            size: 130.0,
-            color: Colors.black,
-          ),
-          */
                     Image.asset(
                       'assets/images/language-archive-logo.png',
                       height: 150,

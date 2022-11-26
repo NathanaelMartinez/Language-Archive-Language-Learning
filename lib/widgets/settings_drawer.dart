@@ -14,17 +14,17 @@ class SettingsDrawer extends StatelessWidget {
           .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return new Text('Loading...');
+          return new Text('Loading...', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300));
         } else {
           var userData = snapshot.data!.docs[0];
           if (value == 0) {
-            return new Text(userData['name']);
+            return new Text(userData['name'], style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300));
           } else if (value == 1) {
-            return new Text(userData['email']);
+            return new Text(userData['email'], style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300));
           } else if (value == 2) {
-            return new Text('${userData['cpPoints']}');
+            return new Text('${userData['cpPoints']}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300));
           } else {
-            return new Text('${userData['llPoints']}');
+            return new Text('${userData['llPoints']}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300));
           }
         }
       },

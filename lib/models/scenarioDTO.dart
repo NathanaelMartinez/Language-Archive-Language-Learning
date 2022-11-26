@@ -3,6 +3,7 @@ class ScenarioDTO {
   String? answerAudioUrl;
   String? translatedPrompt;
   String? translatedAnswer;
+  String? translator;
   bool? isComplete;
 
   ScenarioDTO(
@@ -10,6 +11,7 @@ class ScenarioDTO {
       this.answerAudioUrl,
       this.translatedPrompt,
       this.translatedAnswer,
+      this.translator,
       this.isComplete});
 
   Map<String, Object?> toMap() {
@@ -18,6 +20,7 @@ class ScenarioDTO {
       'answerAudioUrl': answerAudioUrl,
       'translatedPrompt': translatedPrompt,
       'translatedAnswer': translatedAnswer,
+      'translator': translator,
       'isComplete': isComplete
     };
   }

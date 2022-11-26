@@ -368,7 +368,9 @@ class _LanguageLearnerScenarioScreenState
                         child: const Text('Show Answer'),
                       )
                     ],
-                  )
+                  ),
+                  SizedBox(height: 10),
+                  Text('Translation provided by: ${widget.scenario.translator}', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w300),)
                 ],
               ),
             ),

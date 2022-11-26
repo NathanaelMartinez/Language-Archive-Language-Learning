@@ -45,7 +45,9 @@ class _LanguageLearnerSelectionScreenState
                     translatedPrompt: entry['translatedPrompt'],
                     answerAudioUrl: entry['answerAudioUrl'],
                     promptAudioUrl: entry['promptAudioUrl'],
-                    isComplete: entry['isComplete']);
+                    translator: entry['translator'],
+                    isComplete: entry['isComplete'],
+                    docRef: entry.id);
                 return ListTile(
                   title: Container(
                     padding: const EdgeInsets.all(25),
@@ -91,9 +93,16 @@ class _LanguageLearnerSelectionScreenState
             title: 'Learn',
             subtitle: 'Practice a Scenario',
             child: Center(
-                child: Icon(
-              Icons.school,
-              size: 120.0,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/images/language-archive-logo.png',
+                      height: 120),
+                    SizedBox(height: 10),
+                    Text('There are no translated ${widget.userSelection.language} scenarios\nat this time - please come back later!',
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300), textAlign: TextAlign.center)
+                  ]
             )),
             userInfo: widget.userInfo,
           );

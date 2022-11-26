@@ -37,7 +37,7 @@ class LanguageLearningAppScaffold extends StatelessWidget {
                 subtitle,
                 style: TextStyle(
                     color: Colors.black,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w300,
                     fontSize: 15),
               ))
         ]),
