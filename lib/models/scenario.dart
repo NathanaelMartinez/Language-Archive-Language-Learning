@@ -7,7 +7,6 @@ class Scenario {
   String translatedPrompt;
   String answerAudioUrl;
   String promptAudioUrl;
-  String translator;
   String? docRef;
   bool isComplete;
 
@@ -20,7 +19,6 @@ class Scenario {
       required this.translatedPrompt,
       required this.answerAudioUrl,
       required this.promptAudioUrl,
-      required this.translator,
       required this.isComplete,
       this.docRef});
 }

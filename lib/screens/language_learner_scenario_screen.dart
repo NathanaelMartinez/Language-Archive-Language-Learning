@@ -4,6 +4,7 @@ import 'package:flutter_sound/flutter_sound.dart';
 import 'package:string_similarity/string_similarity.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:cs467_language_learning_app/widgets/language_learning_app_scaffold.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../models/scenario.dart';
 
 class LanguageLearnerScenarioScreen extends StatefulWidget {
@@ -126,6 +127,17 @@ class _LanguageLearnerScenarioScreenState
     }
   }
 
+  Future<String> getTranslator() async {
+    var db = FirebaseFirestore.instance;
+    var doc = await db.collection('scenarios').doc(widget.scenario.docRef).get();
+    return doc.data().toString().contains('translator') ? doc.get('translator') : '';
+  }
+
+  Future<bool> recordingPermissions() async {
+    var status = await Permission.microphone.request();
+    return status.isGranted ? true : false;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -201,18 +213,31 @@ class _LanguageLearnerScenarioScreenState
                         controller: userAnswerController,
                       ),
                       SizedBox(height: 5),
-                      GestureDetector(
-                        onLongPressStart: (details) {
-                          listen();
-                        },
-                        onLongPressUp: () {
-                          setState(() {
-                            _isListening = false;
-                            _speechToText.stop();
-                          });
-                        },
-                        child: speechToTextButtonGroup(_isListening),
-                      )
+                      FutureBuilder<bool>(
+                        future: recordingPermissions(),
+                        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                          if (snapshot.data == false) {
+                            return ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white, backgroundColor: Colors.grey),
+                              onPressed: () { null; },
+                              child: Text('Enable Microphone Permissions'));
+                          } else  {
+                            return GestureDetector(
+                              onLongPressStart: (details) {
+                                listen();
+                              },
+                              onLongPressUp: () {
+                                setState(() {
+                                  _isListening = false;
+                                  _speechToText.stop();
+                                });
+                              },
+                              child: speechToTextButtonGroup(_isListening),
+                            );
+                          }
+                        }
+                      ),
                     ],
                   ),
                   // Button Group
@@ -370,7 +395,16 @@ class _LanguageLearnerScenarioScreenState
                     ],
                   ),
                   SizedBox(height: 10),
-                  Text('Translation provided by: ${widget.scenario.translator}', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w300),)
+                  FutureBuilder<String>(
+                    future: getTranslator(),
+                    builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                      if (snapshot.data == "")  {
+                        return Text('The scenario translator could not be loaded in at this time.', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w300));
+                      } else  {
+                        return Text('Translation provided by: ${snapshot.data}', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w300),);
+                      }
+                    },
+                  )
                 ],
               ),
             ),
