@@ -46,7 +46,6 @@ class _ContentProviderSelectionScreenState
                     translatedPrompt: entry['translatedPrompt'],
                     answerAudioUrl: entry['answerAudioUrl'],
                     promptAudioUrl: entry['promptAudioUrl'],
-                    translator: snapshot.data!.docs[index].get('translator'),
                     isComplete: entry['isComplete'],
                     docRef: entry.id);
                 return ListTile(
