@@ -34,8 +34,10 @@ class _ContentProviderScenarioScreenState
   late bool _isUploading;
   late bool _isPromptRecorded;
   late bool _isAnswerRecorded;
-  late bool _isRecording;
-  late bool _isPlaying;
+  late bool _isRecordingPrompt;
+  late bool _isRecordingAnswer;
+  late bool _isPlayingPrompt;
+  late bool _isPlayingAnswer;
 
   File? promptAudio;
   File? answerAudio;
@@ -49,8 +51,10 @@ class _ContentProviderScenarioScreenState
     _isUploading = false;
     _isPromptRecorded = false;
     _isAnswerRecorded = false;
-    _isRecording = false;
-    _isPlaying = false;
+    _isRecordingPrompt = false;
+    _isRecordingAnswer = false;
+    _isPlayingPrompt = false;
+    _isPlayingAnswer = false;
   }
 
   @override
@@ -76,7 +80,11 @@ class _ContentProviderScenarioScreenState
       codec: Codec.aacMP4,
     );
     setState(() {
-      _isRecording = true;
+      if (audioType == 'Prompt') {
+        _isRecordingPrompt = true;
+      } else {
+        _isRecordingAnswer = true;
+      }
     });
   }
 
@@ -93,28 +101,48 @@ class _ContentProviderScenarioScreenState
           answerAudioUrl = recordedUrl;
         }
         recorder.closeRecorder();
-        _isRecording = false;
+        _isRecordingPrompt = false;
+        _isRecordingAnswer = false;
       });
     });
   }
 
-  _startPlayback(audioURL) async {
-    if (!_isPlaying) {
-      _isPlaying = true;
-      await player.openPlayer();
-      await player.startPlayer(
-        fromURI: audioURL,
-        codec: Codec.aacMP4,
-        whenFinished: () => setState(() {
-          _isPlaying = false;
-        }),
-      );
-    } else {
-      await player.stopPlayer();
-      await player.closePlayer();
-      _isPlaying = false;
+  _startPlayback(audioURL, audioType) async {
+    if (audioType == 'Prompt') {
+      if (!_isPlayingPrompt) {
+        _isPlayingPrompt = true;
+        await player.openPlayer();
+        await player.startPlayer(
+          fromURI: audioURL,
+          codec: Codec.aacMP4,
+          whenFinished: () => setState(() {
+            _isPlayingPrompt = false;
+          }),
+        );
+      } else {
+        await player.stopPlayer();
+        await player.closePlayer();
+        _isPlayingPrompt = false;
+      }
+      setState(() {});
+    } else if (audioType == 'Answer') {
+      if (!_isPlayingAnswer) {
+        _isPlayingAnswer = true;
+        await player.openPlayer();
+        await player.startPlayer(
+          fromURI: audioURL,
+          codec: Codec.aacMP4,
+          whenFinished: () => setState(() {
+            _isPlayingAnswer = false;
+          }),
+        );
+      } else {
+        await player.stopPlayer();
+        await player.closePlayer();
+        _isPlayingAnswer = false;
+      }
+      setState(() {});
     }
-    setState(() {});
   }
 
   @override
@@ -192,7 +220,7 @@ class _ContentProviderScenarioScreenState
                             audioType: 'Prompt',
                           ); // stop recording when released
                         },
-                        child: recordOrRecorded(audioType: 'Prompt'),
+                        child: recordOrRecordedPrompt(audioType: 'Prompt'),
                       )
                     ],
                   ),
@@ -230,15 +258,11 @@ class _ContentProviderScenarioScreenState
                           ); // start recording when long pressed
                         },
                         onLongPressUp: () {
-                          setState(
-                            () {
-                              _stopRecord(
-                                audioType: 'Answer',
-                              ); // stop recording when released
-                            },
-                          );
+                          _stopRecord(
+                            audioType: 'Answer',
+                          ); // stop recording when released
                         },
-                        child: recordOrRecorded(audioType: 'Answer'),
+                        child: recordOrRecordedAnswer(audioType: 'Answer'),
                       )
                     ],
                   ),
@@ -321,7 +345,10 @@ class _ContentProviderScenarioScreenState
 
   Future<String> _getUserName() async {
     var db = FirebaseFirestore.instance;
-    var doc = await db.collection('users').where('uid', isEqualTo: widget.userInfo.user.uid.toString()).get();
+    var doc = await db
+        .collection('users')
+        .where('uid', isEqualTo: widget.userInfo.user.uid.toString())
+        .get();
     return doc.docs[0]['name'];
   }
 
@@ -384,8 +411,8 @@ class _ContentProviderScenarioScreenState
     }
   }
 
-  Widget recordOrRecorded({required String audioType}) {
-    if (_isRecording) {
+  Widget recordOrRecordedPrompt({required String audioType}) {
+    if (_isRecordingPrompt) {
       return ElevatedButton(
         style: ElevatedButton.styleFrom(
             foregroundColor: Colors.white, backgroundColor: Colors.green),
@@ -400,10 +427,11 @@ class _ContentProviderScenarioScreenState
               foregroundColor: Colors.white,
               backgroundColor: Colors.green,
             ),
-            child: stopOrPlay(),
+            child: stopOrPlay(_isPlayingPrompt),
             onPressed: () {
               _startPlayback(
                 promptAudioUrl,
+                audioType,
               );
               setState(() {});
             },
@@ -427,6 +455,24 @@ class _ContentProviderScenarioScreenState
         ],
         mainAxisAlignment: MainAxisAlignment.center,
       );
+    } else {
+      return ElevatedButton(
+        style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white, backgroundColor: Colors.black),
+        onPressed: () {},
+        child: Text('Hold to Record $audioType'),
+      );
+    }
+  }
+
+  Widget recordOrRecordedAnswer({required String audioType}) {
+    if (_isRecordingAnswer) {
+      return ElevatedButton(
+        style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white, backgroundColor: Colors.green),
+        onPressed: () {},
+        child: Text('Recording...'),
+      );
     } else if (audioType == 'Answer' && _isAnswerRecorded) {
       return Row(
         children: [
@@ -435,10 +481,11 @@ class _ContentProviderScenarioScreenState
               foregroundColor: Colors.white,
               backgroundColor: Colors.green,
             ),
-            child: stopOrPlay(),
+            child: stopOrPlay(_isPlayingAnswer),
             onPressed: () {
               _startPlayback(
                 answerAudioUrl,
+                audioType,
               );
               setState(() {});
             },
@@ -472,8 +519,8 @@ class _ContentProviderScenarioScreenState
     }
   }
 
-  Widget stopOrPlay() {
-    if (_isPlaying) {
+  Widget stopOrPlay(nowPlaying) {
+    if (nowPlaying) {
       return Text('Stop Recording');
     } else {
       return Text('Play Recording');
