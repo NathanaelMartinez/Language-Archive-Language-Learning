@@ -2,7 +2,7 @@
 ![Language Archive](./assets/images/language_archive.png?raw=true "Language Archive")
 <!--- Badges -->
 ![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)
-[![Build Status](https://app.travis-ci.com/NathanaelMartinez/CS467-Language-Learning-App-Capstone.svg?token=ddzGQ5GLyRugkyU1s2gZ&branch=main)](https://app.travis-ci.com/NathanaelMartinez/CS467-Language-Learning-App-Capstone)
+<!--- [![Build Status](https://app.travis-ci.com/NathanaelMartinez/CS467-Language-Learning-App-Capstone.svg?token=ddzGQ5GLyRugkyU1s2gZ&branch=main)](https://app.travis-ci.com/NathanaelMartinez/CS467-Language-Learning-App-Capstone) -->
 
 # Language Archive
 
