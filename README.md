@@ -1,4 +1,4 @@
-<!--- Image goes here -->
+<!--- Banner -->
 ![Language Archive](./assets/images/language_archive.png?raw=true "Language Archive")
 <!--- Badges -->
 ![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)
@@ -21,7 +21,7 @@ If stumped on a scenario, users can reveal the answer and playback the provided 
 Content providers can access untranslated scenarios and contribute their own translations.
 When providing translations, users are required to add both text and audio translations.
 
-## Demonstration
+## Screencasts
 ![Language Archive: Learners](./assets/images/learn_scenarios.gif?raw=true "Learn Language")
 ![Language Archive: Contributers](./assets/images/contribute_scenarios.gif?raw=true "Contribute")
 
