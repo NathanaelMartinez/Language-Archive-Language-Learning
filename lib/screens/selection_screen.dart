@@ -1,6 +1,6 @@
-import 'package:cs467_language_learning_app/screens/language_learner_selection_screen.dart';
-import 'package:cs467_language_learning_app/screens/content_provider_selection_screen.dart';
-import 'package:cs467_language_learning_app/widgets/settings_drawer.dart';
+import 'package:language_archive/screens/language_learner_selection_screen.dart';
+import 'package:language_archive/screens/content_provider_selection_screen.dart';
+import 'package:language_archive/widgets/settings_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:group_button/group_button.dart';
 import '../models/userSelection.dart';

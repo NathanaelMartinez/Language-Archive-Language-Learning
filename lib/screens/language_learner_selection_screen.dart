@@ -1,10 +1,10 @@
-import 'package:cs467_language_learning_app/models/userSelection.dart';
+import 'package:language_archive/models/userSelection.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'language_learner_scenario_screen.dart';
-import 'package:cs467_language_learning_app/widgets/language_learning_app_scaffold.dart';
-import 'package:cs467_language_learning_app/models/scenario.dart';
+import 'package:language_archive/widgets/language_learning_app_scaffold.dart';
+import 'package:language_archive/models/scenario.dart';
 
 class LanguageLearnerSelectionScreen extends StatefulWidget {
   LanguageLearnerSelectionScreen(
@@ -93,16 +93,17 @@ class _LanguageLearnerSelectionScreenState
             subtitle: 'Practice a Scenario',
             child: Center(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      'assets/images/language-archive-logo.png',
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                  Image.asset('assets/images/language-archive-logo.png',
                       height: 120),
-                    SizedBox(height: 10),
-                    Text('There are no translated ${widget.userSelection.language} scenarios\nat this time - please come back later!',
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300), textAlign: TextAlign.center)
-                  ]
-            )),
+                  SizedBox(height: 10),
+                  Text(
+                      'There are no translated ${widget.userSelection.language} scenarios\nat this time - please come back later!',
+                      style:
+                          TextStyle(fontSize: 15, fontWeight: FontWeight.w300),
+                      textAlign: TextAlign.center)
+                ])),
             userInfo: widget.userInfo,
           );
         } else {

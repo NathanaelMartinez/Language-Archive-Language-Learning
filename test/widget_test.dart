@@ -1,17 +1,17 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:language_archive/screens/create_account_screen.dart';
+import 'package:language_archive/screens/home_login_screen.dart';
+import './firebase_mock.dart';
 
-import 'package:cs467_language_learning_app/main.dart';
-import 'package:cs467_language_learning_app/screens/create_account_screen.dart';
-import 'package:cs467_language_learning_app/screens/home_login_screen.dart';
+Future<void> main() async {
+  // TestWidgetsFlutterBinding.ensureInitialized(); Gets called in setupFirebaseAuthMocks()
+  setupFirebaseAuthMocks();
 
-class MockNavigatorObserver extends Mock implements NavigatorObserver {}
-
-class FakeRoute extends Fake implements Route {}
-
-void main() {
-  late MockNavigatorObserver mockNavigatorObserver;
+  setUpAll(() async {
+    await Firebase.initializeApp();
+  });
 
   Widget createHomeWidgetUnderTest() {
     return MaterialApp(
@@ -53,12 +53,14 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(HomeLoginScreen), findsNothing);
     expect(find.byType(CreateAccountScreen), findsOneWidget);
-    expect(find.text('Create your account'), findsOneWidget);
+    expect(find.text('Create Account'), findsOneWidget);
   });
 
   testWidgets('Verify that the Sign Up page is set up correctly',
       (WidgetTester tester) async {
     await tester.pumpWidget(createSignUpWidgetUnderTest());
+    // Verify that our name field displays 'Name'.
+    expect(find.text('Name'), findsOneWidget);
     // Verify that our email field displays 'Email'.
     expect(find.text('Email'), findsOneWidget);
     // Verify that our password field displays 'Password'.
@@ -81,6 +83,6 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(CreateAccountScreen), findsNothing);
     expect(find.byType(HomeLoginScreen), findsOneWidget);
-    expect(find.text('Sign Up'), findsOneWidget);
+    expect(find.text('Login'), findsOneWidget);
   });
 }

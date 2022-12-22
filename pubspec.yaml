@@ -1,5 +1,5 @@
-name: cs467_language_learning_app
-description: A new Flutter project.
+name: language_archive
+description: A crowd-sourced language learning application.
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
@@ -14,7 +14,6 @@ dependencies:
   cupertino_icons: ^1.0.2
   firebase_core: ^2.1.0
   cloud_firestore: ^4.0.2
-  fake_cloud_firestore: ^2.0.1
   firebase_storage: ^11.0.4
   flutter_sound: ^9.2.13
   permission_handler: ^10.2.0
@@ -30,7 +29,6 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   flutter_lints: ^2.0.0
-  mocktail: ^0.3.0
   group_button: ^5.2.2
 
 flutter:

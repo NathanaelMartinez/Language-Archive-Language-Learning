@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/userSelection.dart';
 import 'content_provider_scenario_screen.dart';
-import 'package:cs467_language_learning_app/widgets/language_learning_app_scaffold.dart';
-import 'package:cs467_language_learning_app/models/scenario.dart';
+import 'package:language_archive/widgets/language_learning_app_scaffold.dart';
+import 'package:language_archive/models/scenario.dart';
 
 class ContentProviderSelectionScreen extends StatefulWidget {
   ContentProviderSelectionScreen(
@@ -112,16 +112,16 @@ class _ContentProviderSelectionScreenState
             subtitle: 'Help Answer a Scenario',
             child: Center(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      'assets/images/language-archive-logo.png',
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                  Image.asset('assets/images/language-archive-logo.png',
                       height: 120),
-                    SizedBox(height: 10),
-                    Text('All ${widget.userSelection.language} scenarios have been translated!',
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300))
-                  ]
-            )),
+                  SizedBox(height: 10),
+                  Text(
+                      'All ${widget.userSelection.language} scenarios have been translated!',
+                      style:
+                          TextStyle(fontSize: 15, fontWeight: FontWeight.w300))
+                ])),
             userInfo: widget.userInfo,
           );
         } else {

@@ -28,9 +28,13 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: OrientationBuilder(builder: (context, orientation) {
-      return _createAccountScreenDisplay(orientation);
-    }));
+    return Scaffold(
+      body: OrientationBuilder(
+        builder: (context, orientation) {
+          return _createAccountScreenDisplay(orientation);
+        },
+      ),
+    );
   }
 
   double determineTopMargin(currOrientation) {
@@ -51,9 +55,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
   Widget _createAccountScreenDisplay(display) {
     return Center(
-        child: ListView(children: [
-      ListTile(
-          title: Container(
+      child: ListView(
+        children: [
+          ListTile(
+            title: Container(
               padding: EdgeInsets.only(
                   top: determineTopMargin(display),
                   bottom: determineBottomMargin(display)),
@@ -65,14 +70,15 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     style: TextStyle(fontSize: 25, fontWeight: FontWeight.w700),
                   ),
                   Container(
-                      margin: const EdgeInsets.only(
-                          left: 30, right: 30, bottom: 10, top: 30),
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black, width: 2),
-                          borderRadius: BorderRadius.all(Radius.circular(5)),
-                          color: Colors.black),
-                      child: Column(children: [
+                    margin: const EdgeInsets.only(
+                        left: 30, right: 30, bottom: 10, top: 30),
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black, width: 2),
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
+                        color: Colors.black),
+                    child: Column(
+                      children: [
                         TextField(
                           controller: nameInput,
                           style: TextStyle(color: Colors.white),
@@ -135,123 +141,129 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    foregroundColor: Colors.white,
-                                    backgroundColor: Colors.green),
-                                onPressed: () async {
-                                  if (emailInput.text.isEmpty ||
-                                      passwordInput.text.isEmpty ||
-                                      nameInput.text.isEmpty ||
-                                      confirmInput.text.isEmpty) {
-                                    final missingInput = const SnackBar(
-                                      content: Text(
-                                        'Please fill in all fields.',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                      duration:
-                                          const Duration(milliseconds: 2000),
-                                      backgroundColor: Colors.red,
+                              style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  backgroundColor: Colors.green),
+                              onPressed: () async {
+                                if (emailInput.text.isEmpty ||
+                                    passwordInput.text.isEmpty ||
+                                    nameInput.text.isEmpty ||
+                                    confirmInput.text.isEmpty) {
+                                  final missingInput = const SnackBar(
+                                    content: Text(
+                                      'Please fill in all fields.',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    duration:
+                                        const Duration(milliseconds: 2000),
+                                    backgroundColor: Colors.red,
+                                  );
+                                  signUpValid = false;
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(missingInput);
+                                } else if (confirmInput.text !=
+                                    passwordInput.text) {
+                                  final invalidInput = const SnackBar(
+                                    content: Text(
+                                      'Password and confirmed password do not match.',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    duration:
+                                        const Duration(milliseconds: 2000),
+                                    backgroundColor: Colors.red,
+                                  );
+                                  signUpValid = false;
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(invalidInput);
+                                } else {
+                                  try {
+                                    credential = await FirebaseAuth.instance
+                                        .createUserWithEmailAndPassword(
+                                      email: emailInput.text,
+                                      password: passwordInput.text,
                                     );
-                                    signUpValid = false;
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(missingInput);
-                                  } else if (confirmInput.text !=
-                                      passwordInput.text) {
-                                    final invalidInput = const SnackBar(
-                                      content: Text(
-                                        'Password and confirmed password do not match.',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                      duration:
-                                          const Duration(milliseconds: 2000),
-                                      backgroundColor: Colors.red,
-                                    );
-                                    signUpValid = false;
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(invalidInput);
-                                  } else {
-                                    try {
-                                      credential = await FirebaseAuth.instance
-                                          .createUserWithEmailAndPassword(
-                                        email: emailInput.text,
-                                        password: passwordInput.text,
+                                    signUpValid = true;
+                                  } on FirebaseAuthException catch (e) {
+                                    if (e.code == 'weak-password') {
+                                      final missingInput = const SnackBar(
+                                        content: Text(
+                                          'The password provided is too weak.',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                        duration: const Duration(
+                                          milliseconds: 2000,
+                                        ),
+                                        backgroundColor: Colors.red,
                                       );
-                                      signUpValid = true;
-                                    } on FirebaseAuthException catch (e) {
-                                      if (e.code == 'weak-password') {
-                                        final missingInput = const SnackBar(
-                                          content: Text(
-                                            'The password provided is too weak.',
-                                            textAlign: TextAlign.center,
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          ),
-                                          duration: const Duration(
-                                              milliseconds: 2000),
-                                          backgroundColor: Colors.red,
-                                        );
-                                        signUpValid = false;
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(missingInput);
-                                      } else if (e.code ==
-                                          'email-already-in-use') {
-                                        final missingInput = const SnackBar(
-                                          content: Text(
-                                            'The account already exists for that email.',
-                                            textAlign: TextAlign.center,
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          ),
-                                          duration: const Duration(
-                                              milliseconds: 2000),
-                                          backgroundColor: Colors.red,
-                                        );
-                                        signUpValid = false;
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(missingInput);
-                                      }
-                                    } catch (e) {
-                                      print(e);
+                                      signUpValid = false;
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(missingInput);
+                                    } else if (e.code ==
+                                        'email-already-in-use') {
+                                      final missingInput = const SnackBar(
+                                        content: Text(
+                                          'The account already exists for that email.',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                        duration:
+                                            const Duration(milliseconds: 2000),
+                                        backgroundColor: Colors.red,
+                                      );
+                                      signUpValid = false;
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(missingInput);
                                     }
+                                  } catch (e) {
+                                    print(e);
                                   }
-                                  if (signUpValid) {
-                                    final newUser = <String, dynamic>{
-                                      "name": nameInput.text,
-                                      "email": emailInput.text,
-                                      "uid": credential.user.uid.toString(),
-                                      "cpPoints": 0,
-                                      "llPoints": 0
-                                    };
-                                    await db.collection("users").add(newUser);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: ((context) =>
-                                              SelectionScreen(
-                                                  userCredentials:
-                                                      credential))),
-                                    );
-                                  }
-                                },
-                                child: const Text('Create your account')),
+                                }
+                                if (signUpValid) {
+                                  final newUser = <String, dynamic>{
+                                    "name": nameInput.text,
+                                    "email": emailInput.text,
+                                    "uid": credential.user.uid.toString(),
+                                    "cpPoints": 0,
+                                    "llPoints": 0
+                                  };
+                                  await db.collection("users").add(newUser);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: ((context) => SelectionScreen(
+                                          userCredentials: credential)),
+                                    ),
+                                  );
+                                }
+                              },
+                              child: const Text('Create your account'),
+                            ),
                             SizedBox(width: 10),
                             ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  side: BorderSide(color: Colors.red),
-                                  foregroundColor: Colors.red,
-                                  backgroundColor: Colors.black,
-                                ),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Text('Cancel'))
+                              style: ElevatedButton.styleFrom(
+                                side: BorderSide(color: Colors.red),
+                                foregroundColor: Colors.red,
+                                backgroundColor: Colors.black,
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text('Cancel'),
+                            )
                           ],
                         ),
-                      ])),
+                      ],
+                    ),
+                  ),
                 ],
-              )))
-    ]));
+              ),
+            ),
+          )
+        ],
+      ),
+    );
   }
 }

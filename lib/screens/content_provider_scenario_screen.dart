@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:cs467_language_learning_app/models/scenarioDTO.dart';
+import 'package:language_archive/models/scenarioDTO.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,8 +7,8 @@ import 'package:flutter_sound/flutter_sound.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'package:cs467_language_learning_app/models/scenario.dart';
-import 'package:cs467_language_learning_app/widgets/language_learning_app_scaffold.dart';
+import 'package:language_archive/models/scenario.dart';
+import 'package:language_archive/widgets/language_learning_app_scaffold.dart';
 
 class ContentProviderScenarioScreen extends StatefulWidget {
   ContentProviderScenarioScreen(
